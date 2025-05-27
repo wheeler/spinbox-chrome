@@ -111,7 +111,6 @@ function createSidebarElement() {
   resetButton.style.padding = '8px 16px';
   resetButton.innerText = 'Reset hidden tracks';
   resetButton.onclick = resetHiddenTracks;
-  console.log('resetButton', resetButton);
   content.appendChild(resetButton);
 
   spinboxSidebar.appendChild(content);
