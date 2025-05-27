@@ -3,10 +3,22 @@ console.log('popup.js loaded');
 const resetButton = document.getElementById('hiddenTracksResetButton');
 
 async function loadData() {
+  const authPromise = chrome.storage.local.get('auth');
+  const authInfo = (await authPromise).auth || {};
+  document.getElementById('clientId').value = authInfo.clientId || '';
+  document.getElementById('accessToken').value = authInfo.accessToken || '';
+  document.getElementById('updateAuth').onclick = () => {
+    chrome.storage.local.set({
+      auth: {
+        clientId: document.getElementById('clientId').value,
+        accessToken: document.getElementById('accessToken').value,
+      },
+    });
+  };
+
   const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
 
-  console.log('Loaded hidden tracks:', hiddenTracks);
   const hiddenTrackCount = Object.keys(hiddenTracks).length;
   const hiddenTracksCount = document.getElementById('hiddenTracksCount');
   hiddenTracksCount.textContent = hiddenTrackCount.toString();
