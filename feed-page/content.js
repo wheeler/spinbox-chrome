@@ -180,3 +180,11 @@ const loadingTimer = setInterval(() => {
     loadPlugin();
   }
 }, 1000);
+
+const userTimer = setInterval(() => {
+  const userIdInput = document.getElementById('spinboxSCUserId');
+  if (userIdInput) {
+    clearInterval(userTimer);
+    spinbox.scUserId = userIdInput.value;
+  }
+}, 1000);

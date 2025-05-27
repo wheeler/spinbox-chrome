@@ -12,6 +12,12 @@
   },
   "content_scripts": [
     {
+      "js": ["feed-page/inject.js"],
+      "matches": ["https://soundcloud.com/*"],
+      "run_at": "document_end",
+      "world": "MAIN"
+    },
+    {
       "js": [
         "feed-page/element-queries.js",
         "feed-page/content.js"
@@ -21,7 +27,8 @@
       "matches": [
         "https://soundcloud.com/*",
         "https://soundcloud.com/NOTE-because-soundcloud-is-a-SPA-we-need-to-match-all-pages-to-allow-for-navigation"
-      ]
+      ],
+      "world": "ISOLATED"
     }
   ],
   "action": {
