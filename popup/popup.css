@@ -1,0 +1,9 @@
+body {
+  background-color: dimgray;
+}
+h1 {
+  color: #f50;
+  text-shadow:
+    black 0 0 2px,
+    black 0 0 10px;
+}

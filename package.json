@@ -1,0 +1,14 @@
+{
+  "name": "spinbox",
+  "version": "0.0.1",
+  "description": "A SoundCloud feed filter to help you dig in to new music with less repetition.",
+  "author": "Mark Wheeler",
+  "license": "none",
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/eslint": "^9.6.1",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3"
+  }
+}
