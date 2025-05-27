@@ -29,9 +29,6 @@ function getSoundListElementInfo(element) {
 function scanCurrentFeed() {
   const soundListItems = spinbox.getVisibleSoundListElements();
   soundListItems.forEach((item) => {
-    console.log('item', item);
-  });
-  soundListItems.forEach((item) => {
     const info = getSoundListElementInfo(item);
     if (spinbox.hiddenTracks[info.trackHref]) {
       item.classList.add('spinbox-hidden');
@@ -178,11 +175,8 @@ async function loadPlugin() {
 
 const loadingTimer = setInterval(() => {
   const soundListItems = document.querySelectorAll('li.soundList__item');
-  console.log('waiting for list items');
   if (soundListItems) {
     clearInterval(loadingTimer);
     loadPlugin();
-  } else {
-    console.log('...not found yet');
   }
 }, 1000);
