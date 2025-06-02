@@ -2,17 +2,18 @@
   <link rel="stylesheet" href="popup.css" />
   <body>
     <h1>spinbox</h1>
-    <div>
-      There are currently
-      <span id="hiddenTracksCount">(loading...)</span> hidden tracks.
-    </div>
-    <div>
+
+    <div class="pop-section">
       <div>private auth information that allows the plugin to access the soundcloud api. Note that all information in the extension is stored locally in your chrome extension and not sent anywhere else.</div>
       <div><label for="clientId">Client ID</label><input id="clientId" type="text"></input></div>
       <div><label for="accessToken">Auth Token</label><input id="accessToken" type="text"></input></div>
       <button id="updateAuth">update auth information</button>
     </div>
-    <div><button id="hiddenTracksResetButton">Reset Hidden Tracks</button></div>
+    <div class="pop-section">
+      There are currently
+      <span id="hiddenTracksCount">(loading...)</span> hidden tracks.
+      <div><button id="hiddenTracksResetButton">Reset Hidden Tracks</button></div>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>

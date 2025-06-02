@@ -110,6 +110,17 @@ function createSidebarElement() {
   resetButton.onclick = resetHiddenTracks;
   content.appendChild(resetButton);
 
+  const playListButton = document.createElement('button');
+  playListButton.id = 'spinboxPlaylistButton';
+  playListButton.className = 'sc-button sc-button-medium sc-button-secondary';
+  playListButton.style.padding = '8px 16px';
+  playListButton.innerText = 'Playlist';
+  playListButton.onclick = async () => {
+    const pl = await spinbox.scApi.getPlaylists(spinbox.scUserId);
+    console.log(pl);
+  };
+  content.appendChild(playListButton);
+
   spinboxSidebar.appendChild(content);
   return spinboxSidebar;
 }

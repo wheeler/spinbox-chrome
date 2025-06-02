@@ -23,7 +23,6 @@ async function loadData() {
   const hiddenTracksCount = document.getElementById('hiddenTracksCount');
   hiddenTracksCount.textContent = hiddenTrackCount.toString();
   resetButton.style.display = hiddenTrackCount === 0 ? 'none' : 'inline-block';
-  console.log(resetButton, resetButton.style.display, 'resetButton display');
 }
 
 async function resetHiddenTracks() {
@@ -36,9 +35,4 @@ resetButton.onclick = resetHiddenTracks;
 
 loadData();
 
-// resetButton.id = 'hiddenTracksResetButton';
-// resetButton.className = "sc-button sc-button-medium sc-button-secondary";
-// resetButton.style.padding = "8px 16px";
-// resetButton.innerText = 'Reset hidden tracks';
-// resetButton.onclick = spinbox.resetHiddenTracks;
-// content.appendChild(resetButton);
+// CORS prevents access to the SoundCloud API from the popup directly, so we need to use the background script or a content script to handle API requests.
