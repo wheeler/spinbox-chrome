@@ -66,21 +66,6 @@ function updateHiddenTracksDescription() {
   }
 }
 
-async function resetHiddenTracks() {
-  console.log('resetting hidden tracks');
-  await chrome.storage.local.set({ hiddenTracks: {} });
-  spinbox.hiddenTracks = {};
-  console.log('did it work?');
-
-  // TODO: send message to popup script to reset hidden tracks
-  updateHiddenTracksDescription();
-
-  const soundListItems = spinbox.getHiddenSoundListElements();
-  soundListItems.forEach((item) => {
-    item.classList.remove('spinbox-hidden');
-  });
-}
-
 function createSidebarElement() {
   const spinboxSidebar = document.createElement('article');
   spinboxSidebar.className = 'sidebarModule';
@@ -102,24 +87,6 @@ function createSidebarElement() {
   hiddenDescription.style.padding = '8px 16px';
   content.appendChild(hiddenDescription);
 
-  const resetButton = document.createElement('button');
-  resetButton.id = 'hiddenTracksResetButton';
-  resetButton.className = 'sc-button sc-button-medium sc-button-secondary';
-  resetButton.style.padding = '8px 16px';
-  resetButton.innerText = 'Reset hidden tracks';
-  resetButton.onclick = resetHiddenTracks;
-  content.appendChild(resetButton);
-
-  const playListButton = document.createElement('button');
-  playListButton.id = 'spinboxPlaylistButton';
-  playListButton.className = 'sc-button sc-button-medium sc-button-secondary';
-  playListButton.style.padding = '8px 16px';
-  playListButton.innerText = 'Playlist';
-  playListButton.onclick = async () => {
-    const pl = await spinbox.scApi.getPlaylists(spinbox.scUserId);
-    console.log(pl);
-  };
-  content.appendChild(playListButton);
 
   spinboxSidebar.appendChild(content);
   return spinboxSidebar;
