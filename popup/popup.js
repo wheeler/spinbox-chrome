@@ -16,6 +16,17 @@ async function loadData() {
     });
   };
 
+  const digSettingsPromise = chrome.storage.local.get('digSettings');
+  const digSettings = (await digSettingsPromise).digSettings || {};
+  document.getElementById('digPlaylist').value = digSettings.playlistId || '';
+  document.getElementById('updateDigSettings').onclick = () => {
+    chrome.storage.local.set({
+      digSettings: {
+        playlistId: document.getElementById('digPlaylist').value,
+      },
+    });
+  };
+
   const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
 

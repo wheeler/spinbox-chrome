@@ -4,10 +4,18 @@
     <h1>spinbox</h1>
 
     <div class="pop-section">
-      <div>private auth information that allows the plugin to access the soundcloud api. Note that all information in the extension is stored locally in your chrome extension and not sent anywhere else.</div>
-      <div><label for="clientId">Client ID</label><input id="clientId" type="text"></input></div>
-      <div><label for="accessToken">Auth Token</label><input id="accessToken" type="text"></input></div>
+      Note that all information in the extension is stored locally in your chrome extension and not sent anywhere else.
+    </div>
+    <div class="pop-section">
+      <div>private auth information (allows the plugin to access the soundcloud api)</div>
+      <div><label for="clientId">Client ID</label> - <input id="clientId" type="text" size=38></input></div>
+      <div><label for="accessToken">Auth Token</label> - <input id="accessToken" type="text" size=36></input></div>
       <button id="updateAuth">update auth information</button>
+    </div>
+    <div class="pop-section">
+      <div>settings for music selection</div>
+      <div><label for="digPlaylist">Dig Playlist ID</label> - <input id="digPlaylist" type="text" size="12"></input></div>
+      <button id="updateDigSettings">update settings</button>
     </div>
     <div class="pop-section">
       There are currently
