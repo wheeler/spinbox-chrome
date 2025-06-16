@@ -68,11 +68,12 @@ function updateHiddenTracksDescription() {
 
 function createSidebarElement() {
   const spinboxSidebar = document.createElement('article');
-  spinboxSidebar.className = 'sidebarModule';
+  spinboxSidebar.className = 'sidebarModule spinbox-sidebar';
 
   const title = document.createElement('h4');
   title.textContent = 'spinbox Extension';
   title.className = 'sidebarHeader__title__webi__style';
+  title.style.padding = '8px 16px';
   spinboxSidebar.appendChild(title);
 
   const content = document.createElement('div');

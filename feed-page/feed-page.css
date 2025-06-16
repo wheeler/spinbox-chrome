@@ -1,10 +1,10 @@
 /* debugging styles */
 .stream li.soundList__item {
-  border: 1px solid #f50;
+  /*border: 1px solid #f50;*/
 }
 
 .userMain .soundList__item {
-  border: 1px dashed #f50;
+  /*border: 1px dashed #f50;*/
 }
 
 /**
