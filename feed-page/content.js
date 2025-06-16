@@ -15,12 +15,12 @@ async function hideSoundListElement(info, element) {
   element.classList.add('spinbox-hidden');
   // TODO: may need to trigger loading more!
 
-  // move to next track if playing. // TODO: fix - not playing correct next track.
+  // move to next track if playing. TODO: test more to make sure it's working.
   const isPlaying = element
     .querySelector('div.sound.streamContext')
     .classList.contains('playing');
   if (isPlaying) {
-    spinbox.scPlayer.playNext();
+    spinbox.scPlayer.playNext(element);
   }
 
   updateHiddenTracksDescription(info);

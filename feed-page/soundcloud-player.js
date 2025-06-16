@@ -25,14 +25,15 @@ const shiftRightArrowKey = {
   code: 'ArrowRight',
   location: 0,
   shiftKey: true,
+  bubbles: true,
 };
 
-// TODO: not working correctly yet when current track playing (goes to recommended?)
-spinbox.scPlayer.playNext = function playNext() {
+spinbox.scPlayer.playNext = function playNext(element) {
+  const target = element || document;
   var keyDown = new KeyboardEvent('keydown', shiftRightArrowKey);
   var keyUp = new KeyboardEvent('keyup', shiftRightArrowKey);
-  document.dispatchEvent(keyDown);
-  document.dispatchEvent(keyUp);
+  target.dispatchEvent(keyDown);
+  target.dispatchEvent(keyUp);
 };
 
 spinbox.scPlayer.playPause = function playPause() {
