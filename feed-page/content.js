@@ -54,7 +54,7 @@ function processNewSoundListElements(soundListElements) {
     // mark as processed
     element.classList.add('spinbox-processed');
 
-    // hide if should be hidden
+    // hide if it should be hidden
     const info = getSoundListElementInfo(element);
     if (spinbox.hiddenTracks[info.trackHref]) {
       element.classList.add('spinbox-hidden');
@@ -144,7 +144,7 @@ function createSidebarElement() {
 }
 
 function setupMutationObserver() {
-  // This would get very specific, but app is not starting on the feed page, it won't find them when navigating to the feed page.
+  // This would get very specific, but if the app is not starting on the feed page, it won't find them when navigating to the feed page.
   // const targetNode = document.querySelector('.stream__list .lazyLoadingList__list');
 
   // Select the node that will be observed for mutations

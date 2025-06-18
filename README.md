@@ -2,7 +2,7 @@
 
 ## Overview
 
-Supercharge the SoundCloud feed to dig for music faster.
+Use the SoundCloud feed as an Inbox to dig for music faster.
 
 ## Design Specification
 
@@ -24,28 +24,27 @@ when the next track is played mark the previous track as played in the db and hi
 
 ## Outline
 
-- Index of keys to skip time
-- Show a block that indicates hidden tracks
-- First pass, add a hide button
+- ~~Index of keys to skip time~~
+- Show a block that indicates hidden tracks(?)
+- ~~First pass, add a hide button~~
 - Second pass, automatically hide on next play
 - Make sure to handle these cases: track ends, shift arrow, click to another track
-- Add a move to dig button
-- Allow dig playlist configuration (or auto- create?)
-  -100 cap?
-  -multi-crate support?
-- Add a skip button don’t hide action
-- Allow to setup a dig playlist
-- On playlist show a move to have playlist button
+- ~~Add a move to dig button~~
+- ~~Allow dig playlist configuration~~ (or auto- create?)
+  - 100 track limit feature?
+  - multi-crate support?
+- Add a skip button don’t hide action (not needed??)
+- On playlist show a "move to have" playlist button
 - Hide tracks already liked or already in playlists
 - Have a side bar that shows what you have skipped this session (does it require an additional storage?)
 
 ## Spikes to understand the code:
 
-- Write to storage array/collection
-- Read from storage array/collection
-- we can call playlist assignment
-- Test the mutation listener
-- We can detect when new elements are added
+- ~~Write to storage array/collection~~
+- ~~Read from storage array/collection~~
+- ~~we can call playlist assignment~~
+- ~~Test the mutation listener~~
+- ~~We can detect when new elements are added~~
 - When we remove all/many elements the page loads more (or do we have to do something to trigger)
 - We can Find the session id and auth keys in page source if needed for playlist manipulation.
-- (Late: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to
+- (Later: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to

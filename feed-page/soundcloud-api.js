@@ -75,7 +75,7 @@ spinbox.scApi.addTrackToPlaylist = async function (
 
     await delay(100); // TODO: not needed?
 
-    // PUT the playlist with new track list
+    // PUT the playlist with the new track list
 
     // TODO: this is getting CAPTCHA'd !!!
     // const response = await fetch(

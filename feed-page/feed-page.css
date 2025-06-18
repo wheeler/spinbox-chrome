@@ -29,9 +29,7 @@
   opacity: 1 !important;
 }
 .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__info,
-.sound:not(.focused)
-  .soundTitle.m-visualSound.m-playing
-  .soundTitle__playButton {
+.sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__playButton {
   opacity: 1 !important;
 }
 .sound:not(.focused) .visuals.listenContext.playing:after {
