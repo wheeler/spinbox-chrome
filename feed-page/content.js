@@ -193,11 +193,13 @@ async function loadHiddenTracks() {
   // console.log('loaded with spinbox.hiddenTracks', spinbox.hiddenTracks);
   updateHiddenTracksDescription();
 }
+
 async function loadDigSettings() {
   spinbox.digSettings = {};
   spinbox.digSettings = (await settingsPromise).digSettings || {};
   // console.log('loaded with spinbox.digSettings', spinbox.digSettings);
 }
+
 function setupRecentlyHiddenTracks() {
   spinbox.recentlyHiddenTracks = [];
   // TODO: determine recent hidden tracks
