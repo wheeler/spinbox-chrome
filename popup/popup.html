@@ -1,27 +1,72 @@
 <html>
-  <link rel="stylesheet" href="popup.css" />
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css" />
+  </head>
   <body>
-    <h1>spinbox</h1>
+    <h1>Spinbox</h1>
 
     <div class="pop-section">
-      Note that all information in the extension is stored locally in your chrome extension and not sent anywhere else.
+      <div class="notice">Note: All information is stored locally in your Chrome extension and not sent anywhere else.</div>
     </div>
+
     <div class="pop-section">
-      <div>private auth information (allows the plugin to access the soundcloud api)</div>
-      <div><label for="clientId">Client ID</label> - <input id="clientId" type="text" size=38></input></div>
-      <div><label for="accessToken">Auth Token</label> - <input id="accessToken" type="text" size=36></input></div>
-      <button id="updateAuth">update auth information</button>
+      <div>Private Auth Information <button class="info-icon" aria-label="Show credentials help" id="showCredentialsHelp">i</button></div>
+      <div class="notice">This allows the plugin to access the SoundCloud API from an active browser tab to modify playlists.</div>
+      <div>
+        <label for="clientId">Client ID</label>
+        <input id="clientId" type="text" placeholder="Enter your client ID" />
+      </div>
+      <div>
+        <label for="accessToken">Auth Token</label>
+        <input id="accessToken" type="text" placeholder="Enter your auth token" />
+      </div>
+      <button id="updateAuth">Update Auth Information</button>
     </div>
+
     <div class="pop-section">
-      <div>settings for music selection</div>
-      <div><label for="digPlaylist">Dig Playlist ID</label> - <input id="digPlaylist" type="text" size="12"></input></div>
-      <button id="updateDigSettings">update settings</button>
+      <div>Music Selection Settings</div>
+      <div>
+        <label for="digPlaylist">Dig Playlist ID</label>
+        <input id="digPlaylist" type="text" placeholder="Enter playlist ID" />
+      </div>
+      <button id="updateDigSettings">Update Settings</button>
     </div>
+
     <div class="pop-section">
-      There are currently
-      <span id="hiddenTracksCount">(loading...)</span> hidden tracks.
-      <div><button id="hiddenTracksResetButton">Reset Hidden Tracks</button></div>
+      <div>Hidden Tracks</div>
+      <div>There are currently <span id="hiddenTracksCount">(loading...)</span> hidden tracks</div>
+      <button id="hiddenTracksResetButton">Reset Hidden Tracks</button>
     </div>
+
+    <div id="credentialsHelp" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>How to get your SoundCloud credentials</h2>
+          <button class="close-button" id="closeCredentialsHelp">×</button>
+        </div>
+        <div class="modal-body">
+          <ol>
+            <li>Open SoundCloud in Chrome</li>
+            <li>Press F12 to open Developer Tools</li>
+            <li>Go to the Network tab</li>
+            <li>Click the filter icon and select "Fetch/XHR"</li>
+            <li>Refresh the page</li>
+            <li>Look for any request to api-v2.soundcloud.com</li>
+            <li>In the request headers, find:
+              <ul>
+                <li>Authorization: OAuth [your-token]</li>
+                <li>client_id: [your-client-id]</li>
+              </ul>
+            </li>
+          </ol>
+          <div class="notice">
+            Note: These credentials are only used within your browser to access the SoundCloud API.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="popup.js"></script>
   </body>
 </html>

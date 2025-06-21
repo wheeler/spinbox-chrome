@@ -47,3 +47,21 @@ resetButton.onclick = resetHiddenTracks;
 loadData();
 
 // CORS prevents access to the SoundCloud API from the popup directly, so we need to use the background script or a content script to handle API requests.
+
+// Information modal
+document.getElementById('showCredentialsHelp').addEventListener('click', () => {
+  document.getElementById('credentialsHelp').classList.add('visible');
+});
+
+document
+  .getElementById('closeCredentialsHelp')
+  .addEventListener('click', () => {
+    document.getElementById('credentialsHelp').classList.remove('visible');
+  });
+
+// Close modal when clicking outside
+document.getElementById('credentialsHelp').addEventListener('click', (e) => {
+  if (e.target.id === 'credentialsHelp') {
+    e.target.classList.remove('visible');
+  }
+});
