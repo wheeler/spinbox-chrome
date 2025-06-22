@@ -25,7 +25,7 @@ when the next track is played mark the previous track as played in the db and hi
 ## Outline
 
 - ~~Index of keys to skip time~~
-- Show a block that indicates hidden tracks(?)
+- ~~Show a block that indicates hidden tracks(?)~~
 - ~~First pass, add a hide button~~
 - Second pass, automatically hide on next play
 - Make sure to handle these cases: track ends, shift arrow, click to another track

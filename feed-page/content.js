@@ -23,7 +23,8 @@ async function hideSoundListElement(info, element) {
     spinbox.scPlayer.playNext(element);
   }
 
-  updateHiddenTracksDescription(info);
+  updateHiddenTrackCount();
+  updateRecentlyHiddenTracksDescription(info);
 }
 
 function getSoundListElementInfo(element) {
@@ -102,11 +103,78 @@ function processNewSoundListElements(soundListElements) {
   });
 }
 
-function updateHiddenTracksDescription() {
-  const hiddenDescription = document.getElementById('hiddenTracksDescription');
-  if (hiddenDescription) {
+function createRecentlyHiddenTrackElement(track) {
+  const trackElement = document.createElement('li');
+  trackElement.className = 'spinbox-recently-hidden-track';
+  const undoHideButton = document.createElement('button');
+  undoHideButton.className = 'spinbox-undo-hide sc-button sc-button-secondary';
+  undoHideButton.innerText = '⟲';
+
+  // Add click handler for undo
+  undoHideButton.onclick = async () => {
+    // Remove from hiddenTracks
+    delete spinbox.hiddenTracks[track.trackHref];
+
+    // Update storage
+    await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
+
+    // Remove hidden class from any matching tracks in the feed
+    document
+      .querySelectorAll('.soundList__item.spinbox-hidden')
+      .forEach((element) => {
+        const info = getSoundListElementInfo(element);
+        if (info.trackHref === track.trackHref) {
+          element.classList.remove('spinbox-hidden');
+        }
+      });
+
+    // Update the recently hidden tracks list
+    setupRecentlyHiddenTracks();
+    updateRecentlyHiddenTracksDescription();
+  };
+
+  const hiddenTrackDescription = document.createElement('div');
+  hiddenTrackDescription.className = 'spinbox-hidden-track-description';
+  const hiddenTrackDescriptionArtist = document.createElement('div');
+  hiddenTrackDescriptionArtist.className =
+    'spinbox-hidden-track-description-artist';
+  hiddenTrackDescriptionArtist.innerText = track.artistName;
+  const hiddenTrackDescriptionTrack = document.createElement('div');
+  hiddenTrackDescriptionTrack.className =
+    'spinbox-hidden-track-description-track';
+  hiddenTrackDescriptionTrack.innerText = track.trackName;
+  hiddenTrackDescription.appendChild(hiddenTrackDescriptionArtist);
+  hiddenTrackDescription.appendChild(hiddenTrackDescriptionTrack);
+
+  trackElement.appendChild(undoHideButton);
+  trackElement.appendChild(hiddenTrackDescription);
+
+  return trackElement;
+}
+
+function updateHiddenTrackCount() {
+  const hiddenTracksCount = document.getElementById('hiddenTracksCount');
+  if (hiddenTracksCount) {
     const count = Object.keys(spinbox.hiddenTracks).length;
-    hiddenDescription.textContent = `Hidden tracks: ${count}`;
+    hiddenTracksCount.textContent = `Hidden tracks: ${count}`;
+  }
+}
+
+function updateRecentlyHiddenTracksDescription(info) {
+  const hiddenList = document.getElementById('recentlyHiddenTrackList');
+  if (hiddenList) {
+    if (info) {
+      // we're adding a single new hidden track
+      if (hiddenList.childElementCount > 4) {
+        hiddenList.removeChild(hiddenList.lastElementChild);
+      }
+      hiddenList.prepend(createRecentlyHiddenTrackElement(info));
+    } else if (spinbox.recentlyHiddenTracks) {
+      const tracks = spinbox.recentlyHiddenTracks.map((track) =>
+        createRecentlyHiddenTrackElement(track)
+      );
+      hiddenList.replaceChildren(...tracks);
+    }
   }
 }
 
@@ -127,16 +195,19 @@ function createSidebarElement() {
   contentDescription.style.padding = '8px 16px';
   contentDescription.textContent = 'spinbox is active.';
 
-  const hiddenDescription = document.createElement('div');
-  hiddenDescription.id = 'hiddenTracksDescription';
-  hiddenDescription.style.padding = '8px 16px';
-  content.appendChild(hiddenDescription);
+  const hiddenCount = document.createElement('div');
+  hiddenCount.id = 'hiddenTracksCount';
+  hiddenCount.style.padding = '8px 16px';
+  content.appendChild(hiddenCount);
 
   const recentlyHidden = document.createElement('div');
-  recentlyHidden.id = 'recentlyHiddenTracks';
+  recentlyHidden.id = 'recentlyHiddenTracksContainer';
   recentlyHidden.style.padding = '8px 16px';
   recentlyHidden.innerText = 'Recently hidden tracks:';
   content.appendChild(recentlyHidden);
+  const recentlyHiddenList = document.createElement('div');
+  recentlyHiddenList.id = 'recentlyHiddenTrackList';
+  recentlyHidden.appendChild(recentlyHiddenList);
   console.log(spinbox.hiddenTracks);
 
   spinboxSidebar.appendChild(content);
@@ -191,7 +262,9 @@ async function loadHiddenTracks() {
   spinbox.hiddenTracks = {};
   spinbox.hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
   // console.log('loaded with spinbox.hiddenTracks', spinbox.hiddenTracks);
-  updateHiddenTracksDescription();
+  setupRecentlyHiddenTracks(); // TODO: when list is long should we defer this?
+  updateHiddenTrackCount();
+  updateRecentlyHiddenTracksDescription();
 }
 
 async function loadDigSettings() {
@@ -202,14 +275,34 @@ async function loadDigSettings() {
 
 function setupRecentlyHiddenTracks() {
   spinbox.recentlyHiddenTracks = [];
-  // TODO: determine recent hidden tracks
+  let fifthRecentTimestamp = 0;
+  Object.values(spinbox.hiddenTracks).forEach((track) => {
+    if (track.hiddenAtTs && track.hiddenAtTs > fifthRecentTimestamp) {
+      // Find the correct position to insert the track
+      const insertIndex = spinbox.recentlyHiddenTracks.findIndex(
+        (t) => t.hiddenAtTs < track.hiddenAtTs
+      );
+
+      if (insertIndex === -1) {
+        // If no earlier timestamp found, append to end
+        spinbox.recentlyHiddenTracks.push(track);
+      } else {
+        // Insert at the correct position
+        spinbox.recentlyHiddenTracks.splice(insertIndex, 0, track);
+      }
+
+      if (spinbox.recentlyHiddenTracks.length > 5) {
+        spinbox.recentlyHiddenTracks.pop(); // keep only the 5 most recent hidden tracks
+        fifthRecentTimestamp = spinbox.recentlyHiddenTracks[4].hiddenAtTs;
+      }
+    }
+  });
 }
 
 // INIT
 loadDigSettings();
 loadHiddenTracks();
 setupMutationObserver();
-setupRecentlyHiddenTracks();
 
 // TODO: move to mutation observer (?)
 const sidebarTimer = setInterval(() => {
@@ -218,7 +311,8 @@ const sidebarTimer = setInterval(() => {
     clearInterval(sidebarTimer);
     spinbox.sidebarElement = createSidebarElement();
     sidebarElement.prepend(spinbox.sidebarElement);
-    updateHiddenTracksDescription();
+    updateHiddenTrackCount();
+    updateRecentlyHiddenTracksDescription();
   }
 }, 1000);
 

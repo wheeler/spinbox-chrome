@@ -46,6 +46,33 @@
   border-radius: 5px;
 }
 
-.spinbox-reset-button {
-  color: #d61348;
+#recentlyHiddenTrackList:first-child {
+  margin-top: 4px;
+}
+#recentlyHiddenTrackList > * {
+  margin-bottom: 4px;
+}
+
+.spinbox-recently-hidden-track {
+  list-style: none;
+  display: flex;
+  gap: 5px;
+}
+.spinbox-undo-hide {
+  margin-top: 3px;
+  padding: 3px 6px 7px 5px; /* deals with awkward placement of ⟲ character*/
+  font-size: 22px;
+  border-radius: 4px;
+  line-height: 15px;
+}
+.spinbox-hidden-track-description-artist, .spinbox-hidden-track-description-track {
+  font-size: 12px;
+  line-height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 295px;
+}
+.spinbox-hidden-track-description-artist {
+  color: #666;
 }
