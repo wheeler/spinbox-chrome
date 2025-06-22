@@ -255,8 +255,8 @@ document.addEventListener('keydown', (event) => {
       // move to next track
       // spinbox.scPlayer.playNext();
       // hide playing track
+    } else {
+      console.log('spinbox: dig called while not playing');
     }
-  } else {
-    console.log('spinbox: dig called while not playing');
   }
 });
