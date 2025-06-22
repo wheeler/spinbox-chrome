@@ -10,14 +10,6 @@ const spaceKey = {
   location: 0,
 };
 
-const rightArrowKey = {
-  keyCode: 39,
-  which: 39,
-  key: 'ArrowRight',
-  code: 'ArrowRight',
-  location: 0,
-};
-
 const shiftRightArrowKey = {
   keyCode: 39,
   which: 39,
@@ -30,15 +22,15 @@ const shiftRightArrowKey = {
 
 spinbox.scPlayer.playNext = function playNext(element) {
   const target = element || document;
-  var keyDown = new KeyboardEvent('keydown', shiftRightArrowKey);
-  var keyUp = new KeyboardEvent('keyup', shiftRightArrowKey);
+  const keyDown = new KeyboardEvent('keydown', shiftRightArrowKey);
+  const keyUp = new KeyboardEvent('keyup', shiftRightArrowKey);
   target.dispatchEvent(keyDown);
   target.dispatchEvent(keyUp);
 };
 
 spinbox.scPlayer.playPause = function playPause() {
-  var keyDown = new KeyboardEvent('keydown', spaceKey);
-  var keyUp = new KeyboardEvent('keyup', spaceKey);
+  const keyDown = new KeyboardEvent('keydown', spaceKey);
+  const keyUp = new KeyboardEvent('keyup', spaceKey);
   document.dispatchEvent(keyDown);
   document.dispatchEvent(keyUp);
 };
