@@ -5,6 +5,13 @@ window.spinbox = window.spinbox || {};
 const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
 const settingsPromise = chrome.storage.local.get('digSettings');
 
+const repostSVG = `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M7.08034 5.71966L4.05001 2.68933L1.01968 5.71966L2.08034 6.78032L3.30002 5.56065V9.75C3.30002 11.2688 4.53124 12.5 6.05002 12.5H8.05002V11H6.05002C5.35966 11 4.80002 10.4404 4.80002 9.75V5.56066L6.01968 6.78032L7.08034 5.71966Z" fill="currentColor"></path><path d="M11.95 13.3107L8.91969 10.2803L9.98035 9.21968L11.2 10.4393L11.2 5.75C11.2 5.05964 10.6404 4.5 9.95001 4.5L7.95001 4.5L7.95001 3L9.95001 3C11.4688 3 12.7 4.23122 12.7 5.75L12.7 10.4394L13.9197 9.21968L14.9803 10.2803L11.95 13.3107Z" fill="currentColor"></path></svg>`;
+function getRepostSvg() {
+  const template = document.createElement('template');
+  template.innerHTML = repostSVG;
+  return template.content.firstElementChild;
+}
+
 // trick the page into loading more tracks by simulating a scroll event
 function forceLoadingMoreTracks() {
   const scrollEvent = new Event('scroll');
@@ -36,18 +43,52 @@ async function hideSoundListElement(info, element) {
 }
 
 function getSoundListElementInfo(element) {
-  let artistName, artistHref, trackName, trackHref;
+  let artistName,
+    artistHref,
+    trackName,
+    trackHref,
+    imageUrl,
+    reposterName,
+    reposterHref;
+
   const artistElement = element.querySelector('a.soundTitle__username');
   if (artistElement) {
     artistHref = artistElement.getAttribute('href');
     artistName = artistElement.innerText.trim();
   }
+
   const titleElement = element.querySelector('a.soundTitle__title');
   if (titleElement) {
     trackHref = titleElement.getAttribute('href');
     trackName = titleElement.innerText.trim();
   }
-  return { artistName, artistHref, trackName, trackHref };
+
+  const imageElement = element.querySelector('span.image__full');
+  if (imageElement) {
+    // Extract the image URL from the background-image style
+    const bgImage = imageElement.style.backgroundImage;
+    if (bgImage) {
+      // Remove url("...") wrapper and get the actual URL
+      imageUrl = bgImage.replace(/^url\(['"](.+)['"]\)$/, '$1');
+    }
+  }
+
+  const repostIndicator = element.querySelector('.soundContext__repost');
+  if (repostIndicator) {
+    const reposterElement = repostIndicator.previousElementSibling;
+    reposterHref = reposterElement.getAttribute('href');
+    reposterName = reposterElement.innerText.trim();
+  }
+
+  return {
+    artistName,
+    artistHref,
+    trackName,
+    trackHref,
+    imageUrl,
+    reposterName,
+    reposterHref,
+  };
 }
 
 function processNewSoundListElements(soundListElements) {
@@ -114,6 +155,14 @@ function processNewSoundListElements(soundListElements) {
 function createRecentlyHiddenTrackElement(track) {
   const trackElement = document.createElement('li');
   trackElement.className = 'spinbox-recently-hidden-track';
+
+  const imageContainer = document.createElement('span');
+  imageContainer.className = 'spinbox-track-image';
+  if (track.imageUrl) {
+    imageContainer.style.backgroundImage = `url('${track.imageUrl}')`;
+  }
+  trackElement.appendChild(imageContainer);
+
   const undoHideButton = document.createElement('button');
   undoHideButton.className = 'spinbox-undo-hide sc-button sc-button-secondary';
   undoHideButton.innerText = '⟲';
@@ -138,24 +187,36 @@ function createRecentlyHiddenTrackElement(track) {
 
     // Update the recently hidden tracks list
     setupRecentlyHiddenTracks();
+    updateHiddenTrackCount();
     updateRecentlyHiddenTracksDescription();
   };
 
   const hiddenTrackDescription = document.createElement('div');
   hiddenTrackDescription.className = 'spinbox-hidden-track-description';
+
   const hiddenTrackDescriptionArtist = document.createElement('div');
   hiddenTrackDescriptionArtist.className =
     'spinbox-hidden-track-description-artist';
-  hiddenTrackDescriptionArtist.innerText = track.artistName;
+  if (track.reposterName) {
+    hiddenTrackDescriptionArtist.appendChild(
+      document.createTextNode(track.reposterName)
+    );
+    hiddenTrackDescriptionArtist.appendChild(getRepostSvg());
+  }
+  hiddenTrackDescriptionArtist.appendChild(
+    document.createTextNode(track.artistName)
+  );
+
   const hiddenTrackDescriptionTrack = document.createElement('div');
   hiddenTrackDescriptionTrack.className =
     'spinbox-hidden-track-description-track';
   hiddenTrackDescriptionTrack.innerText = track.trackName;
+
   hiddenTrackDescription.appendChild(hiddenTrackDescriptionArtist);
   hiddenTrackDescription.appendChild(hiddenTrackDescriptionTrack);
 
-  trackElement.appendChild(undoHideButton);
   trackElement.appendChild(hiddenTrackDescription);
+  trackElement.appendChild(undoHideButton);
 
   return trackElement;
 }
@@ -211,12 +272,11 @@ function createSidebarElement() {
   const recentlyHidden = document.createElement('div');
   recentlyHidden.id = 'recentlyHiddenTracksContainer';
   recentlyHidden.style.padding = '8px 16px';
-  recentlyHidden.innerText = 'Recently hidden tracks:';
+  recentlyHidden.innerText = 'Recently hidden';
   content.appendChild(recentlyHidden);
   const recentlyHiddenList = document.createElement('div');
   recentlyHiddenList.id = 'recentlyHiddenTrackList';
   recentlyHidden.appendChild(recentlyHiddenList);
-  console.log(spinbox.hiddenTracks);
 
   spinboxSidebar.appendChild(content);
   return spinboxSidebar;
@@ -269,7 +329,6 @@ function setupMutationObserver() {
 async function loadHiddenTracks() {
   spinbox.hiddenTracks = {};
   spinbox.hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
-  // console.log('loaded with spinbox.hiddenTracks', spinbox.hiddenTracks);
   setupRecentlyHiddenTracks(); // TODO: when list is long should we defer this?
   updateHiddenTrackCount();
   updateRecentlyHiddenTracksDescription();
@@ -278,7 +337,6 @@ async function loadHiddenTracks() {
 async function loadDigSettings() {
   spinbox.digSettings = {};
   spinbox.digSettings = (await settingsPromise).digSettings || {};
-  // console.log('loaded with spinbox.digSettings', spinbox.digSettings);
 }
 
 function setupRecentlyHiddenTracks() {
@@ -334,7 +392,6 @@ const userTimer = setInterval(() => {
 }, 1000);
 
 document.addEventListener('keydown', (event) => {
-  console.log('content keydown event', event);
   if (event.key === 'x') {
     if (spinbox.scPlayer.isPlaying()) {
       console.log('spinbox: this will hide the current track');

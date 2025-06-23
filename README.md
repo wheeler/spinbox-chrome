@@ -27,7 +27,7 @@ when the next track is played mark the previous track as played in the db and hi
 - ~~Index of keys to skip time~~
 - ~~Show a block that indicates hidden tracks(?)~~
 - ~~First pass, add a hide button~~
-- Second pass, automatically hide on next play
+- [Optional] automatically hide on next play
 - Make sure to handle these cases: track ends, shift arrow, click to another track
 - ~~Add a move to dig button~~
 - ~~Allow dig playlist configuration~~ (or auto- create?)
@@ -37,6 +37,9 @@ when the next track is played mark the previous track as played in the db and hi
 - On playlist show a "move to have" playlist button
 - Hide tracks already liked or already in playlists
 - Have a side bar that shows what you have skipped this session (does it require an additional storage?)
+- handle playlists that appear on the feed
+- ability to auto-hide long tracks (sets)
+- known issue(ish): when you hide a track, then play the track above it, it will play the hidden track next. It's a bit confusing, but easy to click on the track you want to play.
 
 ## Spikes to understand the code:
 

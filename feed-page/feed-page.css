@@ -57,6 +57,16 @@
   list-style: none;
   display: flex;
   gap: 5px;
+  /*outline: 1px solid #f50;*/
+}
+.spinbox-track-image {
+  width: 25px;
+  height: 25px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .spinbox-undo-hide {
   margin-top: 3px;
@@ -71,8 +81,16 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 295px;
+  width: 265px;
 }
 .spinbox-hidden-track-description-artist {
   color: #666;
+}
+
+.spinbox-hidden-track-description-artist svg {
+  display: inline;
+  vertical-align: text-bottom;
+  width: 15px;
+  height: 15px;
+  margin: 0 2px;
 }
