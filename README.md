@@ -45,6 +45,7 @@ when the next track is played mark the previous track as played in the db and hi
 - ~~we can call playlist assignment~~
 - ~~Test the mutation listener~~
 - ~~We can detect when new elements are added~~
-- When we remove all/many elements the page loads more (or do we have to do something to trigger)
+- ~~When we remove all/many elements, does the page load more? (or do we have to do something to trigger)~~
+  - ~~No, it does not automatically load more tracks but when you scroll slightly down it does.~~
 - We can Find the session id and auth keys in page source if needed for playlist manipulation.
 - (Later: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to

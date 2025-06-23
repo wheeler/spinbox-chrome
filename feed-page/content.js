@@ -5,6 +5,12 @@ window.spinbox = window.spinbox || {};
 const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
 const settingsPromise = chrome.storage.local.get('digSettings');
 
+// trick the page into loading more tracks by simulating a scroll event
+function forceLoadingMoreTracks() {
+  const scrollEvent = new Event('scroll');
+  window.dispatchEvent(scrollEvent);
+}
+
 async function hideSoundListElement(info, element) {
   spinbox.hiddenTracks[info.trackHref] = {
     ...info,
@@ -22,6 +28,8 @@ async function hideSoundListElement(info, element) {
   if (isPlaying) {
     spinbox.scPlayer.playNext(element);
   }
+
+  forceLoadingMoreTracks();
 
   updateHiddenTrackCount();
   updateRecentlyHiddenTracksDescription(info);
