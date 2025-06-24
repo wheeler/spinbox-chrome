@@ -26,7 +26,6 @@ async function hideSoundListElement(info, element) {
   };
   await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
   element.classList.add('spinbox-hidden');
-  // TODO: may need to trigger loading more!
 
   // move to next track if playing. TODO: test more to make sure it's working.
   const isPlaying = element
