@@ -91,6 +91,7 @@ function getSoundListElementInfo(element) {
 }
 
 function processNewSoundListElements(soundListElements) {
+  let hidSomeElements = false;
   soundListElements.forEach((element) => {
     if (
       !element.classList.contains('soundList__item') ||
@@ -107,6 +108,7 @@ function processNewSoundListElements(soundListElements) {
     const info = getSoundListElementInfo(element);
     if (spinbox.hiddenTracks[info.trackHref]) {
       element.classList.add('spinbox-hidden');
+      hidSomeElements = true;
     }
 
     // add buttons
@@ -149,6 +151,9 @@ function processNewSoundListElements(soundListElements) {
       contextElement.appendChild(hideButton);
     }
   });
+  if (hidSomeElements) {
+    forceLoadingMoreTracks();
+  }
 }
 
 function createRecentlyHiddenTrackElement(track) {
