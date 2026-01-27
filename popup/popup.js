@@ -3,6 +3,7 @@ console.log('popup.js loaded');
 const resetButton = document.getElementById('hiddenTracksResetButton');
 
 async function loadData() {
+  /** api settings currently hidden
   const authPromise = chrome.storage.local.get('auth');
   const authInfo = (await authPromise).auth || {};
   document.getElementById('clientId').value = authInfo.clientId || '';
@@ -26,6 +27,7 @@ async function loadData() {
       },
     });
   };
+  */
 
   const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
@@ -48,6 +50,7 @@ loadData();
 
 // CORS prevents access to the SoundCloud API from the popup directly, so we need to use the background script or a content script to handle API requests.
 
+/** api settings currently hidden
 // Information modal
 document.getElementById('showCredentialsHelp').addEventListener('click', () => {
   document.getElementById('credentialsHelp').classList.add('visible');
@@ -65,3 +68,4 @@ document.getElementById('credentialsHelp').addEventListener('click', (e) => {
     e.target.classList.remove('visible');
   }
 });
+*/
