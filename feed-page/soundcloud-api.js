@@ -1,3 +1,14 @@
+/**
+ * SC-API helper functions
+ *
+ * currently not used and removed from manifest
+ *
+ * to restore to manifest add
+ *    "feed-page/soundcloud-api.js",
+ * as the first element in
+ *    "content_scripts": ... "js":
+ */
+
 window.spinbox = window.spinbox || {};
 
 spinbox.scApi = {};
@@ -52,6 +63,7 @@ const delay = (durationMs) => {
   return new Promise((resolve) => setTimeout(resolve, durationMs));
 };
 
+// TODO: THIS IS NOT WORKING CORRECTLY
 spinbox.scApi.addTrackToPlaylist = async function (
   trackId,
   playlistId,
@@ -97,7 +109,7 @@ spinbox.scApi.addTrackToPlaylist = async function (
     //   }
     // );
 
-    // NOTE: this works... but the app's understanding of the playlist is out of date.
+    // NOTE: this partly looks like it works but it is not working. Did i just forget to change the hardcoding?
     const response = await fetch(
       `https://api-v2.soundcloud.com/playlists/${playlistId}?client_id=${auth.clientId}&app_version=1749738053&app_locale=en`,
       {

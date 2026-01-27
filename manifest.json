@@ -13,7 +13,6 @@
   "content_scripts": [
     {
       "js": [
-        "feed-page/soundcloud-api.js",
         "feed-page/soundcloud-player.js",
         "feed-page/element-queries.js",
         "feed-page/content.js"
