@@ -369,7 +369,10 @@ function setupRecentlyHiddenTracks() {
   });
 }
 
-// INIT
+/** --------------------
+ *    INITIALIZATION
+ *----------------------- */
+
 loadDigSettings();
 loadHiddenTracks();
 setupMutationObserver();
@@ -386,7 +389,9 @@ const sidebarTimer = setInterval(() => {
   }
 }, 1000);
 
-// TODO: move to mutation observer (?)
+// userId/API not currently used
+/**
+moved to mutation observer
 const userTimer = setInterval(() => {
   const userIdInput = document.getElementById('spinboxSCUserId');
   if (userIdInput) {
@@ -394,7 +399,10 @@ const userTimer = setInterval(() => {
     spinbox.scUserId = userIdInput.value;
   }
 }, 1000);
+*/
 
+// TODO: complete these keybindings
+/**
 document.addEventListener('keydown', (event) => {
   if (event.key === 'x') {
     if (spinbox.scPlayer.isPlaying()) {
@@ -423,3 +431,4 @@ document.addEventListener('keydown', (event) => {
     }
   }
 });
+*/
