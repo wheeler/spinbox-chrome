@@ -299,9 +299,9 @@ function setupMutationObserver() {
   }
 
   // Callback function to execute when mutations are observed
-  const callback = (mutationList, _observer) => {
+  const callback = (mutations, _observer) => {
     const addedSoundListItems = [];
-    for (const mutation of mutationList) {
+    for (const mutation of mutations) {
       if (
         mutation.type === 'childList' &&
         mutation.target.classList.contains('lazyLoadingList__list')
