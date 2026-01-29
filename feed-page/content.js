@@ -362,13 +362,9 @@ function createSidebarElement() {
 }
 
 function setupMutationObserver() {
-  // This would get very specific, but if the app is not starting on the feed page, it won't find them when navigating to the feed page.
-  // const targetNode = document.querySelector('.stream__list .lazyLoadingList__list');
+  const appNode = document.getElementById('app');
 
-  // Select the node that will be observed for mutations
-  const targetNode = document.getElementById('app');
-
-  if (!targetNode) {
+  if (!appNode) {
     console.error('Target node not found for MutationObserver.');
     return;
   }
@@ -377,15 +373,31 @@ function setupMutationObserver() {
   const callback = (mutations, _observer) => {
     const addedSoundListItems = [];
     for (const mutation of mutations) {
-      if (
-        mutation.type === 'childList' &&
-        mutation.target.classList.contains('lazyLoadingList__list')
-      ) {
-        mutation.addedNodes.forEach((node) => {
-          if (node.classList && node.classList.contains('soundList__item')) {
-            addedSoundListItems.push(node);
+      if (mutation.type === 'childList') {
+        if (
+          mutation.target.id === 'content' &&
+          mutation.target.baseURI.endsWith('feed')
+        ) {
+          const spinboxSidebar = document.querySelector(
+            'article.spinbox-sidebar'
+          );
+          if (!spinboxSidebar) {
+            const sidebarElement = document.querySelector('div.streamSidebar');
+            spinbox.sidebarElement = createSidebarElement();
+            sidebarElement.prepend(spinbox.sidebarElement);
+            updateHiddenTrackCount();
+            updateRecentlyHiddenTracksDescription();
           }
-        });
+        } else if (
+          mutation.target.classList.contains('lazyLoadingList__list') &&
+          mutation.target.baseURI.endsWith('feed')
+        ) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.classList && node.classList.contains('soundList__item')) {
+              addedSoundListItems.push(node);
+            }
+          });
+        }
       }
     }
     if (addedSoundListItems.length !== 0) {
@@ -400,7 +412,7 @@ function setupMutationObserver() {
   const observerConfig = { attributes: false, childList: true, subtree: true };
 
   // Start observing the target node for configured mutations
-  observer.observe(targetNode, observerConfig);
+  observer.observe(appNode, observerConfig);
 }
 
 // TODO add listener for the "help" menu and add spinbox hotkey info there
@@ -451,18 +463,6 @@ function setupRecentlyHiddenTracks() {
 loadDigSettings();
 loadHiddenTracks();
 setupMutationObserver();
-
-// TODO: move to mutation observer (?)
-const sidebarTimer = setInterval(() => {
-  const sidebarElement = document.querySelector('div.streamSidebar');
-  if (sidebarElement) {
-    clearInterval(sidebarTimer);
-    spinbox.sidebarElement = createSidebarElement();
-    sidebarElement.prepend(spinbox.sidebarElement);
-    updateHiddenTrackCount();
-    updateRecentlyHiddenTracksDescription();
-  }
-}, 1000);
 
 // userId/API not currently used
 /**
