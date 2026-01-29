@@ -382,11 +382,16 @@ function setupMutationObserver() {
             'article.spinbox-sidebar'
           );
           if (!spinboxSidebar) {
-            const sidebarElement = document.querySelector('div.streamSidebar');
-            spinbox.sidebarElement = createSidebarElement();
-            sidebarElement.prepend(spinbox.sidebarElement);
-            updateHiddenTrackCount();
-            updateRecentlyHiddenTracksDescription();
+            const SCsidebarElement =
+              document.querySelector('div.streamSidebar');
+            if (!SCsidebarElement) {
+              console.log('Spinbox - no sidebar?'); // when can this happen?
+            } else {
+              spinbox.sidebarElement = createSidebarElement();
+              SCsidebarElement.prepend(spinbox.sidebarElement);
+              updateHiddenTrackCount();
+              updateRecentlyHiddenTracksDescription();
+            }
           }
         } else if (
           mutation.target.classList.contains('lazyLoadingList__list') &&
