@@ -1,45 +1,46 @@
-# spinbox Chrome Extension
+# Spinbox \[Chrome Extension\]
 
 ## Overview
 
 Use the SoundCloud feed as an Inbox to dig for music faster.
 
-## Design Specification
+## Specification
 
-Keep a list of tracks that have already been played, and hide them from the feed.
+Operate only on the "Feed" page.
 
-When tracks start to load on the page, check if they are played tracks and hide them if not.
+Allow users to hide tracks from their feed (for tracks that have already been listened to / evaluated.)
 
-Wait for tracks to load
-Get a list of the tracks on the page
-Walk through list
-For each track in the "already played" database, add a class to hide the track
+When tracks load on the page, check if they are played tracks and hide them if not.
 
-- using a class means the hide-unhide can be done very quickly(?)
+When hide action is used on a currently playing track, automatically start playing the next track.
 
-detect when a track is played
-when the next track is played mark the previous track as played in the db and hide it
-
-# Spin cloud
+Disable the expand-and-contract behavior of tracks with "visuals" (background image) - it reduces visual layout predictability
 
 ## Outline
 
 - ~~Index of keys to skip time~~
 - ~~Show a block that indicates hidden tracks(?)~~
 - ~~First pass, add a hide button~~
-- [Optional] automatically hide on next play
-- Make sure to handle these cases: track ends, shift arrow, click to another track
 - ~~Add a move to dig button~~
 - ~~Allow dig playlist configuration~~ (or auto- create?)
+- ~~Have a sidebar that shows recently hidden tracks~~
+- make global show-hide configuration
+- make "visual" expand-collapse optional
+- Dig button - quickly add tracks to a playlist (and hide and next)
   - 100 track limit feature?
   - multi-crate support?
-- Add a skip button don’t hide action (not needed??)
+- when there is configuration required prompt configuration
+- have some better handling of handle playlists that appear on the feed
+- ability to auto-hide long tracks (sets)
+- - known issue(ish): when you hide a track, then play the track above it, it will play the hidden track next. It's a bit confusing, but easy to click on the track you want to play.
+
+further future...
+- figure out what the heck is going on with the API to see if we can actually manipulate playlists by API
 - On playlist show a "move to have" playlist button
 - Hide tracks already liked or already in playlists
-- Have a side bar that shows what you have skipped this session (does it require an additional storage?)
-- handle playlists that appear on the feed
-- ability to auto-hide long tracks (sets)
-- known issue(ish): when you hide a track, then play the track above it, it will play the hidden track next. It's a bit confusing, but easy to click on the track you want to play.
+- [Optional] automatically hide on next play
+  - handle these cases: track ends, shift arrow, click to another track (minimum play time?)
+  - Add a skip button don’t hide action (not needed??)
 
 ## Spikes to understand the code:
 
@@ -51,4 +52,4 @@ when the next track is played mark the previous track as played in the db and hi
 - ~~When we remove all/many elements, does the page load more? (or do we have to do something to trigger)~~
   - ~~No, it does not automatically load more tracks but when you scroll slightly down it does.~~
 - We can Find the session id and auth keys in page source if needed for playlist manipulation.
-- (Later: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to
+- Later: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to
