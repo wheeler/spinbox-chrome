@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Spinbox",
   "version": "0.0.1",
-  "description": "A SoundCloud feed filter to help you dig in to new music with less repetition.",
+  "description": "Feed tools for SoundCloud that help you sort through new music more efficiently.",
 
   "icons": {
     "16": "images/icon-16.png",
@@ -12,11 +12,7 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "feed-page/soundcloud-player.js",
-        "feed-page/element-queries.js",
-        "feed-page/content.js"
-      ],
+      "js": ["feed-page/soundcloud-player.js", "feed-page/content.js"],
       "css": ["feed-page/feed-page.css"],
       "run_at": "document_end",
       "matches": [
