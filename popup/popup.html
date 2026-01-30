@@ -37,6 +37,53 @@
     </div>
     -->
 
+    <!-- POPUP for Expand/Collapse Setting -->
+    <div class="pop-section">
+      <div>
+        Track player expand/collapse
+        <button
+          class="info-icon"
+          aria-label="Show Visual Expand/Collapse More Info"
+          id="showVisualExpandInfo"
+        >
+          i
+        </button>
+      </div>
+      <div>
+        <label for="disableVisualExpand">
+          Disable visual track expand/collapse
+        </label>
+        <label class="switch">
+          <input id="disableVisualExpand" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+        <div id="pageRefreshWarning" class="notice warning" style="display: none">Note: This settings change requires a page refresh to take effect</div>
+      </div>
+    </div>
+
+    <div id="visualExpandHelp" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Track Player Expand/Collapse</h3>
+          <button class="close-button" id="closeVisualExpandHelp">×</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Spinbox disables the player expand/collapse for tracks with a waveform background image.
+            Turn this setting <span class="value-example">off</span> to restore the default behavior.
+          </p>
+
+          <div class="notice">The default soundcloud behavior looks like the following:
+          <img
+            src="expand-contract-example.gif"
+            alt="gif showing SoundCloud's expand-contract behavior on tracks with a background image"
+          />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POPUP for Credentials Help -->
     <div class="pop-section">
       <div>Hidden Tracks</div>
       <div>There are currently <span id="hiddenTracksCount">(loading...)</span> hidden tracks</div>
@@ -46,7 +93,7 @@
     <div id="credentialsHelp" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>How to get your SoundCloud credentials</h2>
+          <h3>How to get your SoundCloud credentials</h3>
           <button class="close-button" id="closeCredentialsHelp">×</button>
         </div>
         <div class="modal-body">

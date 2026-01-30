@@ -1,9 +1,10 @@
 console.log('spinbox loading');
 
-window.spinbox = window.spinbox || {};
+window.spinbox = window.spinbox || { settings: {}, digSettings: {} };
 
 const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
-const settingsPromise = chrome.storage.local.get('digSettings');
+const digSettingsPromise = chrome.storage.local.get('digSettings');
+const settingsPromise = chrome.storage.local.get('settings');
 
 const repostSVG = `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M7.08034 5.71966L4.05001 2.68933L1.01968 5.71966L2.08034 6.78032L3.30002 5.56065V9.75C3.30002 11.2688 4.53124 12.5 6.05002 12.5H8.05002V11H6.05002C5.35966 11 4.80002 10.4404 4.80002 9.75V5.56066L6.01968 6.78032L7.08034 5.71966Z" fill="currentColor"></path><path d="M11.95 13.3107L8.91969 10.2803L9.98035 9.21968L11.2 10.4393L11.2 5.75C11.2 5.05964 10.6404 4.5 9.95001 4.5L7.95001 4.5L7.95001 3L9.95001 3C11.4688 3 12.7 4.23122 12.7 5.75L12.7 10.4394L13.9197 9.21968L14.9803 10.2803L11.95 13.3107Z" fill="currentColor"></path></svg>`;
 function getRepostSvg() {
@@ -378,6 +379,13 @@ function setupMutationObserver() {
           mutation.target.id === 'content' &&
           mutation.target.baseURI.endsWith('feed')
         ) {
+          console.log('spinbox.settings read');
+          if (!spinbox.settings.overrideDisableVisualExpand) {
+            const streamList = document.querySelector('div.stream__list');
+            if (streamList) {
+              streamList.classList.add('spinbox-disable-visual-expand');
+            }
+          }
           const spinboxSidebar = document.querySelector(
             'article.spinbox-sidebar'
           );
@@ -430,9 +438,9 @@ async function loadHiddenTracks() {
   updateRecentlyHiddenTracksDescription();
 }
 
-async function loadDigSettings() {
-  spinbox.digSettings = {};
-  spinbox.digSettings = (await settingsPromise).digSettings || {};
+async function loadSettings() {
+  spinbox.digSettings = (await digSettingsPromise).digSettings || {};
+  spinbox.settings = (await settingsPromise).settings || {};
 }
 
 function setupRecentlyHiddenTracks() {
@@ -465,7 +473,7 @@ function setupRecentlyHiddenTracks() {
  *    INITIALIZATION
  *----------------------- */
 
-loadDigSettings();
+loadSettings();
 loadHiddenTracks();
 setupMutationObserver();
 

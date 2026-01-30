@@ -29,6 +29,22 @@ async function loadData() {
   };
   */
 
+  // Load 'Disable visual track expand collapse' setting
+  const settingPromise = chrome.storage.local.get('settings');
+  const settings = (await settingPromise).settings || {};
+  const overrideSetting = settings.overrideDisableVisualExpand || false;
+  const disableToggle = document.getElementById('disableVisualExpand');
+  if (disableToggle) {
+    disableToggle.checked = !overrideSetting;
+    disableToggle.addEventListener('change', async () => {
+      const val = disableToggle.checked;
+      document.getElementById('pageRefreshWarning').style.display = 'block';
+      await chrome.storage.local.set({
+        settings: { overrideDisableVisualExpand: !val },
+      });
+    });
+  }
+
   const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
 
@@ -50,8 +66,28 @@ loadData();
 
 // CORS prevents access to the SoundCloud API from the popup directly, so we need to use the background script or a content script to handle API requests.
 
+// Information modals
+document
+  .getElementById('showVisualExpandInfo')
+  .addEventListener('click', () => {
+    document.getElementById('visualExpandHelp').classList.add('visible');
+  });
+
+document
+  .getElementById('closeVisualExpandHelp')
+  .addEventListener('click', () => {
+    document.getElementById('visualExpandHelp').classList.remove('visible');
+  });
+
+// Close modal when clicking outside
+document.getElementById('visualExpandHelp').addEventListener('click', (e) => {
+  if (e.target.id === 'visualExpandHelp') {
+    e.target.classList.remove('visible');
+  }
+});
+
 /** api settings currently hidden
-// Information modal
+// SC credentials settings information
 document.getElementById('showCredentialsHelp').addEventListener('click', () => {
   document.getElementById('credentialsHelp').classList.add('visible');
 });
