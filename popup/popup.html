@@ -1,15 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Spinbox Settings</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <h1>Spinbox</h1>
 
     <div class="pop-section">
-      <div class="notice">Note: All information is stored locally in your Chrome extension and not sent anywhere else.</div>
+      <div class="notice">
+        Note: All information is stored locally in your Chrome extension and not
+        sent anywhere else.
+      </div>
     </div>
 
     <!-- API currently not used - hiding settings
@@ -86,7 +89,10 @@
     <!-- POPUP for Credentials Help -->
     <div class="pop-section">
       <div>Hidden Tracks</div>
-      <div>There are currently <span id="hiddenTracksCount">(loading...)</span> hidden tracks</div>
+      <div>
+        There are currently
+        <span id="hiddenTracksCount">(loading...)</span> hidden tracks
+      </div>
       <button id="hiddenTracksResetButton">Reset Hidden Tracks</button>
     </div>
 
@@ -104,7 +110,8 @@
             <li>Click the filter icon and select "Fetch/XHR"</li>
             <li>Refresh the page</li>
             <li>Look for any request to api-v2.soundcloud.com</li>
-            <li>In the request headers, find:
+            <li>
+              In the request headers, find:
               <ul>
                 <li>Authorization: OAuth [your-token]</li>
                 <li>client_id: [your-client-id]</li>
@@ -112,7 +119,8 @@
             </li>
           </ol>
           <div class="notice">
-            Note: These credentials are only used within your browser to access the SoundCloud API.
+            Note: These credentials are only used within your browser to access
+            the SoundCloud API.
           </div>
         </div>
       </div>
