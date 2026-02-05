@@ -179,8 +179,7 @@ function processNewSoundListElements(soundListElements) {
         const digButton = document.createElement('button');
         digButton.className =
           'spinbox-dig sc-button sc-button-medium sc-button-secondary';
-        hideButton.style.marginLeft = '4px';
-        digButton.innerText = 'X';
+        digButton.style.marginLeft = '4px';
         digButton.innerText = 'Dig';
         digButton.onclick = () => {
           console.log('dig track --', info);
