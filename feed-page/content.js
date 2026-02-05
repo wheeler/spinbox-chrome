@@ -214,12 +214,14 @@ function processNewSoundListElements(soundListElements) {
       hideButton.className =
         'spinbox-hide sc-button sc-button-medium sc-button-secondary';
       hideButton.style.marginLeft = '4px';
-      hideButton.innerText = 'X';
+      hideButton.innerText = '✕';
       hideButton.onclick = () =>
         hideSoundListElement(
           info,
           contextElement.closest('li.soundList__item')
         );
+      hideButton.ariaLabel = 'Hide Track';
+      hideButton.title = 'Hide Track';
       buttons.push(hideButton);
 
       buttons[0].style.marginLeft = 'auto'; // left align all buttons
@@ -233,7 +235,7 @@ function processNewSoundListElements(soundListElements) {
 
 function createRecentlyHiddenTrackElement(track) {
   const trackElement = document.createElement('li');
-  trackElement.className = 'spinbox-recently-hidden-track';
+  trackElement.className = 'spinbox-recently-hidden-track sc-mb-0.5x';
 
   const imageContainer = document.createElement('span');
   imageContainer.className = 'spinbox-track-image';
@@ -245,6 +247,8 @@ function createRecentlyHiddenTrackElement(track) {
   const undoHideButton = document.createElement('button');
   undoHideButton.className = 'spinbox-undo-hide sc-button sc-button-secondary';
   undoHideButton.innerText = '⟲';
+  undoHideButton.ariaLabel = 'Un-Hide Track';
+  undoHideButton.title = 'Un-Hide Track';
 
   // Add click handler for undo
   undoHideButton.onclick = async () => {
@@ -304,7 +308,7 @@ function updateHiddenTrackCount() {
   const hiddenTracksCount = document.getElementById('hiddenTracksCount');
   if (hiddenTracksCount) {
     const count = Object.keys(spinbox.hiddenTracks).length;
-    hiddenTracksCount.textContent = `Hidden tracks: ${count}`;
+    hiddenTracksCount.textContent = count.toString();
   }
 }
 
@@ -331,9 +335,12 @@ function createSidebarElement() {
   spinboxSidebar.className = 'sidebarModule spinbox-sidebar';
 
   const title = document.createElement('h4');
-  title.textContent = 'spinbox Extension';
   title.className = 'sidebarHeader__title__webi__style';
   title.style.padding = '8px 16px';
+  const hiddenTrackCount = document.createElement('span');
+  hiddenTrackCount.id = 'hiddenTracksCount';
+  title.appendChild(hiddenTrackCount);
+  title.append(' hidden tracks');
   spinboxSidebar.appendChild(title);
 
   const content = document.createElement('div');
@@ -343,15 +350,13 @@ function createSidebarElement() {
   contentDescription.style.padding = '8px 16px';
   contentDescription.textContent = 'spinbox is active.';
 
-  const hiddenCount = document.createElement('div');
-  hiddenCount.id = 'hiddenTracksCount';
-  hiddenCount.style.padding = '8px 16px';
-  content.appendChild(hiddenCount);
-
   const recentlyHidden = document.createElement('div');
   recentlyHidden.id = 'recentlyHiddenTracksContainer';
   recentlyHidden.style.padding = '8px 16px';
-  recentlyHidden.innerText = 'Recently hidden';
+  const recentlyHiddenTitle = document.createElement('div');
+  recentlyHiddenTitle.innerText = 'Recently hidden';
+  recentlyHiddenTitle.className = 'sc-text-secondary sc-mb-1x';
+  recentlyHidden.appendChild(recentlyHiddenTitle);
   content.appendChild(recentlyHidden);
   const recentlyHiddenList = document.createElement('div');
   recentlyHiddenList.id = 'recentlyHiddenTrackList';
