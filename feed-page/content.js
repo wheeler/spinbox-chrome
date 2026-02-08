@@ -245,7 +245,8 @@ function createRecentlyHiddenTrackElement(track) {
   trackElement.appendChild(imageContainer);
 
   const undoHideButton = document.createElement('button');
-  undoHideButton.className = 'spinbox-undo-hide sc-button sc-button-secondary';
+  undoHideButton.className =
+    'spinbox-undo-hide-button sc-button sc-button-secondary';
   undoHideButton.innerText = '⟲';
   undoHideButton.ariaLabel = 'Un-Hide Track';
   undoHideButton.title = 'Un-Hide Track';
@@ -355,7 +356,8 @@ function createSidebarElement() {
   recentlyHidden.style.padding = '8px 16px';
   const recentlyHiddenTitle = document.createElement('div');
   recentlyHiddenTitle.innerText = 'Recently hidden';
-  recentlyHiddenTitle.className = 'sc-text-secondary sc-mb-1x';
+  recentlyHiddenTitle.className =
+    'sc-text-secondary sidebarHeader__title__webi__style sc-mb-1x';
   recentlyHidden.appendChild(recentlyHiddenTitle);
   content.appendChild(recentlyHidden);
   const recentlyHiddenList = document.createElement('div');

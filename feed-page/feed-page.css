@@ -55,13 +55,19 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-.spinbox-undo-hide {
+.spinbox-undo-hide-button {
   margin-top: 3px;
   padding: 3px 6px 7px 5px; /* deals with awkward placement of ⟲ character*/
   font-size: 22px;
   border-radius: 4px;
   line-height: 15px;
+  visibility: hidden;
 }
+.spinbox-recently-hidden-track:hover .spinbox-undo-hide-button {
+  /*border: 1px solid red;*/
+  visibility: visible;
+}
+
 .spinbox-hidden-track-description-artist, .spinbox-hidden-track-description-track {
   font-size: 12px;
   line-height: 16px;
