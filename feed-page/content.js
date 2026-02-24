@@ -310,6 +310,12 @@ function updateHiddenTrackCount() {
   if (hiddenTracksCount) {
     const count = Object.keys(spinbox.hiddenTracks).length;
     hiddenTracksCount.textContent = count.toString();
+
+    const hiddenTracksPlural = document.getElementById('hiddenTracksPlural');
+    if (hiddenTracksPlural) {
+      if (count === 1) hiddenTracksPlural.textContent = '';
+      else hiddenTracksPlural.textContent = 's';
+    }
   }
 }
 
@@ -318,15 +324,27 @@ function updateRecentlyHiddenTracksDescription(info) {
   if (hiddenList) {
     if (info) {
       // we're adding a single new hidden track
+      const noHiddenTracks = document.getElementById('noHiddenTracks');
+      if (noHiddenTracks) {
+        noHiddenTracks.remove();
+      }
       if (hiddenList.childElementCount > 4) {
         hiddenList.removeChild(hiddenList.lastElementChild);
       }
       hiddenList.prepend(createRecentlyHiddenTrackElement(info));
     } else if (spinbox.recentlyHiddenTracks) {
-      const tracks = spinbox.recentlyHiddenTracks.map((track) =>
-        createRecentlyHiddenTrackElement(track)
-      );
-      hiddenList.replaceChildren(...tracks);
+      if (spinbox.recentlyHiddenTracks.length === 0) {
+        const noHiddenTracks = document.createElement('li');
+        noHiddenTracks.id = 'noHiddenTracks';
+        noHiddenTracks.className = 'spinbox-recently-hidden-track sc-mb-0.5x';
+        noHiddenTracks.textContent = 'No hidden tracks yet';
+        hiddenList.replaceChildren(noHiddenTracks);
+      } else {
+        const tracks = spinbox.recentlyHiddenTracks.map((track) =>
+          createRecentlyHiddenTrackElement(track)
+        );
+        hiddenList.replaceChildren(...tracks);
+      }
     }
   }
 }
@@ -341,7 +359,11 @@ function createSidebarElement() {
   const hiddenTrackCount = document.createElement('span');
   hiddenTrackCount.id = 'hiddenTracksCount';
   title.appendChild(hiddenTrackCount);
-  title.append(' hidden tracks');
+  title.append(' hidden track');
+  const hiddenTracksPlural = document.createElement('span');
+  hiddenTracksPlural.id = 'hiddenTracksPlural';
+  hiddenTracksPlural.textContent = 's';
+  title.appendChild(hiddenTracksPlural);
   spinboxSidebar.appendChild(title);
 
   const content = document.createElement('div');

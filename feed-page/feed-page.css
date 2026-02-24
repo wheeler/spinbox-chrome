@@ -68,6 +68,10 @@
   visibility: visible;
 }
 
+#noHiddenTracks {
+  font-size: 12px;
+}
+
 .spinbox-hidden-track-description-artist, .spinbox-hidden-track-description-track {
   font-size: 12px;
   line-height: 16px;
