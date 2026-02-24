@@ -15,32 +15,6 @@
       </div>
     </div>
 
-    <!-- API currently not used - hiding settings
-    <div class="pop-section">
-      <div>Private Auth Information <button class="info-icon" aria-label="Show credentials help" id="showCredentialsHelp">i</button></div>
-      <div class="notice">This allows the plugin to access the SoundCloud API from an active browser tab to modify playlists.</div>
-      <div>
-        <label for="clientId">Client ID</label>
-        <input id="clientId" type="text" placeholder="Enter your client ID" />
-      </div>
-      <div>
-        <label for="accessToken">Auth Token</label>
-        <input id="accessToken" type="text" placeholder="Enter your auth token" />
-      </div>
-      <button id="updateAuth">Update Auth Information</button>
-    </div>
-
-    <div class="pop-section">
-      <div>Music Selection Settings</div>
-      <div>
-        <label for="digPlaylist">Dig Playlist ID</label>
-        <input id="digPlaylist" type="text" placeholder="Enter playlist ID" />
-      </div>
-      <button id="updateDigSettings">Update Settings</button>
-    </div>
-    -->
-
-    <!-- POPUP for Expand/Collapse Setting -->
     <div class="pop-section">
       <div>
         Track player expand/collapse
@@ -64,6 +38,7 @@
       </div>
     </div>
 
+    <!-- Modal for Expand/Collapse Setting -->
     <div id="visualExpandHelp" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
@@ -86,7 +61,6 @@
       </div>
     </div>
 
-    <!-- POPUP for Credentials Help -->
     <div class="pop-section">
       <div>Hidden Tracks</div>
       <div>
@@ -94,36 +68,6 @@
         <span id="hiddenTracksCount">(loading...)</span> hidden tracks
       </div>
       <button id="hiddenTracksResetButton">Reset Hidden Tracks</button>
-    </div>
-
-    <div id="credentialsHelp" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>How to get your SoundCloud credentials</h3>
-          <button class="close-button" id="closeCredentialsHelp">×</button>
-        </div>
-        <div class="modal-body">
-          <ol>
-            <li>Open SoundCloud in Chrome</li>
-            <li>Press F12 to open Developer Tools</li>
-            <li>Go to the Network tab</li>
-            <li>Click the filter icon and select "Fetch/XHR"</li>
-            <li>Refresh the page</li>
-            <li>Look for any request to api-v2.soundcloud.com</li>
-            <li>
-              In the request headers, find:
-              <ul>
-                <li>Authorization: OAuth [your-token]</li>
-                <li>client_id: [your-client-id]</li>
-              </ul>
-            </li>
-          </ol>
-          <div class="notice">
-            Note: These credentials are only used within your browser to access
-            the SoundCloud API.
-          </div>
-        </div>
-      </div>
     </div>
 
     <script src="popup.js"></script>
