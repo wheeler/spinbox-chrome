@@ -390,13 +390,15 @@ function createSidebarElement() {
   return spinboxSidebar;
 }
 
-function setupMutationObserver() {
+async function setupMutationObserver() {
   const appNode = document.getElementById('app');
 
   if (!appNode) {
     console.error('Target node not found for MutationObserver.');
     return;
   }
+
+  await settingsPromise;
 
   // Callback function to execute when mutations are observed
   const callback = (mutations, _observer) => {
