@@ -1,6 +1,9 @@
 console.log('popup.js loaded');
 
 const resetButton = document.getElementById('hiddenTracksResetButton');
+const exportButton = document.getElementById('exportHiddenTracksButton');
+const importButton = document.getElementById('importHiddenTracksButton');
+const importFileInput = document.getElementById('importHiddenTracksFile');
 
 async function loadData() {
   // Load 'Disable visual track expand collapse' setting
@@ -25,7 +28,8 @@ async function loadData() {
   const hiddenTrackCount = Object.keys(hiddenTracks).length;
   const hiddenTracksCount = document.getElementById('hiddenTracksCount');
   hiddenTracksCount.textContent = hiddenTrackCount.toString();
-  resetButton.style.display = hiddenTrackCount === 0 ? 'none' : 'inline-block';
+  resetButton.disabled = hiddenTrackCount === 0;
+  exportButton.disabled = hiddenTrackCount === 0;
 }
 
 async function resetHiddenTracks() {
@@ -34,10 +38,54 @@ async function resetHiddenTracks() {
   // TODO: send message to content script to reset hidden tracks
 }
 
+async function exportHiddenTracks() {
+  const storagePromise = chrome.storage.local.get('hiddenTracks');
+  const hiddenTracks = (await storagePromise).hiddenTracks || {};
+
+  const dataStr = JSON.stringify(hiddenTracks, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `spinbox-hidden-tracks-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+async function importHiddenTracks(file) {
+  try {
+    const text = await file.text();
+    const importedTracks = JSON.parse(text);
+    if (typeof importedTracks !== 'object' || importedTracks === null) {
+      alert('Invalid file format. Expected a JSON object.');
+      return;
+    }
+
+    const storagePromise = chrome.storage.local.get('hiddenTracks');
+    const existingTracks = (await storagePromise).hiddenTracks || {};
+
+    const mergedTracks = { ...existingTracks, ...importedTracks };
+    await chrome.storage.local.set({ hiddenTracks: mergedTracks });
+
+    loadData();
+    // TODO: send message to content script to update hidden tracks
+  } catch (error) {
+    alert(`Error importing file: ${error.message}`);
+  }
+}
+
 resetButton.onclick = resetHiddenTracks;
-
-loadData();
-
+exportButton.onclick = exportHiddenTracks;
+importButton.onclick = () => importFileInput.click();
+importFileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    importHiddenTracks(e.target.files[0]);
+    e.target.value = ''; // Reset the input
+  }
+});
 
 // Information modals
 document
@@ -59,3 +107,4 @@ document.getElementById('visualExpandHelp').addEventListener('click', (e) => {
   }
 });
 
+loadData();

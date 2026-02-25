@@ -127,6 +127,11 @@ button {
   transition: background-color 0.2s;
 }
 
+button:disabled, button:disabled:hover {
+  background-color: #babcc0;
+  cursor: not-allowed;
+}
+
 button:hover {
   background-color: var(--primary-darkened);
 }
