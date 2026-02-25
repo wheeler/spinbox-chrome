@@ -404,12 +404,11 @@ async function setupMutationObserver() {
   const callback = (mutations, _observer) => {
     const addedSoundListItems = [];
     for (const mutation of mutations) {
-      if (mutation.type === 'childList') {
+      if (mutation.type === 'childList' && mutation.addedNodes.length) {
         if (
           mutation.target.id === 'content' &&
           mutation.target.baseURI.endsWith('feed')
         ) {
-          console.log('spinbox.settings read');
           if (!spinbox.settings.overrideDisableVisualExpand) {
             const streamList = document.querySelector('div.stream__list');
             if (streamList) {
@@ -431,6 +430,12 @@ async function setupMutationObserver() {
               updateRecentlyHiddenTracksDescription();
             }
           }
+          // check for already loaded but unprocessed nodes - seems to happen on navigation returning to the feed
+          const existingSoundListItems = document.querySelectorAll(
+            'li.soundList__item:not(.spinbox-processed)'
+          );
+          if (existingSoundListItems && existingSoundListItems.length)
+            addedSoundListItems.push(...existingSoundListItems);
         } else if (
           mutation.target.classList.contains('lazyLoadingList__list') &&
           mutation.target.baseURI.endsWith('feed')
