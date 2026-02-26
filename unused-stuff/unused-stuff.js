@@ -131,6 +131,8 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+// TODO add listener for the "help" menu and add spinbox hotkey info there
+
 // from popup.js - use credentials for using the API (so far was unstable, buggy)
 
 // popup - loadData()

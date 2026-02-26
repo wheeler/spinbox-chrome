@@ -63,6 +63,7 @@ async function importHiddenTracks(file) {
       alert('Invalid file format. Expected a JSON object.');
       return;
     }
+    // TODO: actually validate import format...
 
     const storagePromise = chrome.storage.local.get('hiddenTracks');
     const existingTracks = (await storagePromise).hiddenTracks || {};

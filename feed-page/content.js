@@ -371,10 +371,7 @@ async function setupMutationObserver() {
   observer.observe(appNode, observerConfig);
 }
 
-// TODO add listener for the "help" menu and add spinbox hotkey info there
-
 async function loadHiddenTracks() {
-  spinbox.hiddenTracks = {};
   spinbox.hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
   setupRecentlyHiddenTracks(); // TODO: when list is long should we defer this?
   updateHiddenTrackCount();
