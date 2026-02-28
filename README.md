@@ -1,55 +1,64 @@
-# Spinbox \[Chrome Extension\]
+# Spinbox Chrome Extension
 
-## Overview
+Use the SoundCloud feed as like a music inbox. Dig for music faster and with less repetition.
 
-Use the SoundCloud feed as an Inbox to dig for music faster.
+SoundCloud is a fantastic platform for music discovery, allowing you to follow artists and see new music they release.
+The feed page shows all your followed artist tracks in chronological order. This is a great tool for music discovery,
+but has the downside that you cannot "pick up where you left off" if you return to the feed later. This extension
+allows you to persistently hide tracks from your feed so you won't have to sift through them all over again.
 
-## Specification
+## Description
 
-Operate only on the "Feed" page.
+Allow users to persistently hide tracks from their feed. Adds a hide button to each track and adds details about
+hidden tracks to the sidebar. When the currently playing track is hidden, automatically start playing the next track.
 
-Allow users to hide tracks from their feed (for tracks that have already been listened to / evaluated.)
+Example workflow: Go through your feed, hide tracks that you don't like. For tracks that you do like, either heart them
+or add them to a playlist then hide them. This way all tracks that you've already been "digging" through will not appear
+on your next visit to the feed, and you can pick up where you left off (after any newer tracks have been added to the
+top).
 
-When tracks load on the page, check if they are played tracks and hide them if not.
+Currently only operates on the `/feed` page. Does not modify anything else like the `/artist` page, "playlist" pages
+(`/artist/sets/playlist`), etc.
 
-When hide action is used on a currently playing track, automatically start playing the next track.
+### Additional Quality of Life features:
 
-Disable the expand-and-contract behavior of tracks with "visuals" (background image) - it reduces visual layout predictability
+Disables the expand-and-contract behavior of tracks with "visuals" (background image). Disabling it increases page
+layout stability (for example, if you want to go directly to the middle of the next track by clicking the middle of the
+waveform twice). This feature is optional and can be disabled in the extension settings window.
 
-## Outline
+### Privacy
 
-- ~~Index of keys to skip time~~
-- ~~Show a block that indicates hidden tracks(?)~~
-- ~~First pass, add a hide button~~
-- ~~Add a move to dig button~~
-- ~~Allow dig playlist configuration~~ (or auto- create?)
-- ~~Have a sidebar that shows recently hidden tracks~~
-- make global show-hide configuration
-- make "visual" expand-collapse optional
-- Dig button - quickly add tracks to a playlist (and hide and next)
-  - 100 track limit feature?
-  - multi-crate support?
-- when there is configuration required prompt configuration
-- have some better handling of handle playlists that appear on the feed
-- ability to auto-hide long tracks (sets)
-- - known issue(ish): when you hide a track, then play the track above it, it will play the hidden track next. It's a bit confusing, but easy to click on the track you want to play.
+This extension works completely internally in the browser. All data is stored in the browser's extension storage. <ins>
+No data is communicated or stored externally.</ins>
 
-further future...
-- figure out what the heck is going on with the API to see if we can actually manipulate playlists by API
-- On playlist show a "move to have" playlist button
-- Hide tracks already liked or already in playlists
-- [Optional] automatically hide on next play
-  - handle these cases: track ends, shift arrow, click to another track (minimum play time?)
-  - Add a skip button don’t hide action (not needed??)
+### Known quirks / issues:
+- Currently handles playlists or albums on the feed as one whole thing to hide instead of individual tracks.
+- Hidden tracks can still be played in the SoundCloud UI. Example: if you hide a playing track and the next track is
+already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
+normally and the user can simply click another track to play it.
 
-## Spikes to understand the code:
+## Planned Features
+- "Dig" button – quickly add tracks to a playlist (and hide and move on to the next one)
+- Global Show / Hide toggle
+- Hotkey operation for hide and dig
+- Optional feature to auto-hide tracks above a certain length
+- Improve handling of playlists / albums that appear in the feed
+- Some visual representation for blocks of hidden tracks
 
-- ~~Write to storage array/collection~~
-- ~~Read from storage array/collection~~
-- ~~we can call playlist assignment~~
-- ~~Test the mutation listener~~
-- ~~We can detect when new elements are added~~
-- ~~When we remove all/many elements, does the page load more? (or do we have to do something to trigger)~~
-  - ~~No, it does not automatically load more tracks but when you scroll slightly down it does.~~
-- We can Find the session id and auth keys in page source if needed for playlist manipulation.
-- Later: are there performance problems as the amount of hidden elements gets long? Should we delete them from the dom at some point and suggest refresh to
+### further future...
+- Use the SC API to manipulate playlists instead of faking user clicks.
+  - Unfortunately, Soundcloud does not fully support either of their public APIs (v1 and v2) nor do they fully document
+  them, so it has been difficult to implement so far.
+- Allow configuration more easily either within the sidebar or opening a configuration page instead of the extension
+popup (which is relatively hidden to most users).
+- Prompt user in page when configuration is necessary.
+- Multiple dig-playlists (crates)
+- Auto create dig playlist?
+- Auto 100-track limit for playlists?
+- Mute specific artists
+- Playlist management features: move tracks between playlists quickly.
+- Option to hide tracks already liked or already in playlists.
+- Optional Turbo mode(?)
+  - Automatically hide every played track when the next track is played.
+  - Handle these cases: track ends, shift arrow, click to another track (minimum play time?)
+  - Add a skip / don’t hide action
