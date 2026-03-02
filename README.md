@@ -1,5 +1,7 @@
 # Spinbox Chrome Extension
 
+![Screenshot of the SoundCloud feed with the SpinBox Extension active](/.github/images/spinbox_screenshot.png)
+
 Use the SoundCloud feed as like a music inbox. Dig for music faster and with less repetition.
 
 SoundCloud is a fantastic platform for music discovery, allowing you to follow artists and see new music they release.
