@@ -18,4 +18,12 @@ export default defineConfig([
       // customize rules here
     },
   },
+  {
+    files: ['**/*.test.js', '**/*.spec.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+  },
 ]);

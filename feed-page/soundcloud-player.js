@@ -1,6 +1,6 @@
-window.spinbox = window.spinbox || {};
-
-spinbox.scPlayer = {};
+/**
+ * Utilities for interacting with the SoundCloud player on the page.
+ */
 
 const spaceKey = {
   keyCode: 32,
@@ -20,26 +20,26 @@ const shiftRightArrowKey = {
   bubbles: true,
 };
 
-spinbox.scPlayer.playNext = function playNext(element) {
+export function playNext(element) {
   const target = element || document;
   const keyDown = new KeyboardEvent('keydown', shiftRightArrowKey);
   const keyUp = new KeyboardEvent('keyup', shiftRightArrowKey);
   target.dispatchEvent(keyDown);
   target.dispatchEvent(keyUp);
-};
+}
 
-spinbox.scPlayer.playPause = function playPause() {
+export function playPause() {
   const keyDown = new KeyboardEvent('keydown', spaceKey);
   const keyUp = new KeyboardEvent('keyup', spaceKey);
   document.dispatchEvent(keyDown);
   document.dispatchEvent(keyUp);
-};
+}
 
 /**
  * detect if the SoundCloud player is currently playing based on the play button state in the footer player
  * @returns {boolean}
  */
-spinbox.scPlayer.isPlaying = function isPlaying() {
+export function isPlaying() {
   const playButton = document.querySelector('button.playControl__play');
   return playButton && playButton.classList.contains('playing');
-};
+}

@@ -12,7 +12,7 @@
   },
   "content_scripts": [
     {
-      "js": ["feed-page/soundcloud-player.js", "feed-page/content.js"],
+      "js": ["feed-page/content.js"],
       "css": ["feed-page/feed-page.css"],
       "run_at": "document_end",
       "matches": [

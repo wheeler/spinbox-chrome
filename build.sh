@@ -1,16 +1,30 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 echo "Copying necessary files to /dist..."
 
 # Create dist directory
 mkdir -p dist
 
-# Files and folders to copy
+
+# Bundle the content script modules into a single classic script
+npx esbuild feed-page/content.js \
+  --bundle \
+  --outfile=dist/feed-page/content.js \
+  --format=iife \
+  --target=chrome110 \
+#  --minify
+
+echo "✓ Bundled: feed-page/content.js"
+
+# Copy files that don't need bundling
 files=(
   "README.md"
   "manifest.json"
   "popup"
-  "feed-page"
+  "feed-page/feed-page.css"
   "images"
 )
 

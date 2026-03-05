@@ -19,6 +19,7 @@ async function loadData() {
       await chrome.storage.local.set({
         settings: { overrideDisableVisualExpand: !val },
       });
+      // TODO: notify tabs
     });
   }
 

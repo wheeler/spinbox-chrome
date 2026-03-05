@@ -1,5 +1,13 @@
 // from content.js
 
+// Setup listening
+const extensionId = chrome.runtime.id;
+chrome.runtime.onMessage.addListener(function (message, sender) {
+  if (sender.id === extensionId) {
+    console.log('spinbox received extension message', message, sender);
+  }
+});
+
 // TODO: actually implement feature flag
 if (spinbox.digSettings.showDig) {
   const digButton = document.createElement('button');
@@ -132,6 +140,18 @@ document.addEventListener('keydown', (event) => {
 });
 
 // TODO add listener for the "help" menu and add spinbox hotkey info there
+
+// from popup.js - send messages to content script
+
+// Notify Tabs
+let tabs = await chrome.tabs.query({});
+tabs = tabs.filter(
+  (tab) => !tab.discarded && !tab.frozen && tab.status === 'complete'
+);
+// TODO: can I somehow filter to only pages that have had our content_script injected easily?
+tabs.forEach((tab) => {
+  chrome.tabs.sendMessage(tab.id, 'settings_updated', {});
+});
 
 // from popup.js - use credentials for using the API (so far was unstable, buggy)
 
