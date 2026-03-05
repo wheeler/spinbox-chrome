@@ -63,7 +63,7 @@ function getSoundListElementInfo(element) {
     trackName = titleElement.innerText.trim();
   }
 
-  const imageElement = element.querySelector('span.image__full');
+  const imageElement = element.querySelector('div.sound__artwork span.image__full');
   if (imageElement) {
     // Extract the image URL from the background-image style
     const bgImage = imageElement.style.backgroundImage;
