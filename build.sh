@@ -5,6 +5,8 @@ set -o pipefail
 
 echo "Copying necessary files to /dist..."
 
+# clear the dist directory
+rm -r dist
 # Create dist directory
 mkdir -p dist
 
@@ -30,7 +32,7 @@ files=(
 
 for file in "${files[@]}"; do
   if [ -e "$file" ]; then
-    cp -r "$file" dist/
+    rsync -Rr "$file" dist/
     echo "✓ Copied: $file"
   else
     echo "⚠ Not found: $file"
