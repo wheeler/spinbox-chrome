@@ -29,7 +29,10 @@
   opacity: 1 !important;
 }
 .stream__list.spinbox-disable-visual-expand .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__info,
-.stream__list.spinbox-disable-visual-expand .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__playButton {
+.stream__list.spinbox-disable-visual-expand .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__username,
+.stream__list.spinbox-disable-visual-expand .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__title,
+.stream__list.spinbox-disable-visual-expand .sound:not(.focused) .soundTitle.m-visualSound.m-playing .soundTitle__playButton,
+.stream__list.spinbox-disable-visual-expand .sound:not(.focused) .sound__waveform {
   opacity: 1 !important;
 }
 .stream__list.spinbox-disable-visual-expand .sound:not(.focused) .visuals.listenContext.playing:after {
