@@ -91,6 +91,29 @@ function processNewSoundListElements(soundListElements) {
   }
 }
 
+async function undoHideTrack(trackHref) {
+  // Remove from hiddenTracks
+  delete spinbox.hiddenTracks[trackHref];
+
+  // Update storage
+  await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
+
+  // Remove hidden class from any matching tracks in the feed
+  document
+    .querySelectorAll('.soundList__item.spinbox-hidden')
+    .forEach((element) => {
+      const info = getSoundListElementInfo(element);
+      if (info.trackHref === trackHref) {
+        element.classList.remove('spinbox-hidden');
+      }
+    });
+
+  // Update the recently hidden tracks list
+  setupRecentlyHiddenTracks(); // needed to find the now nth recently hidden track
+  updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
+  updateRecentlyHiddenTracksDescription(); // needed to restore the nth recent hidden track row
+}
+
 function createRecentlyHiddenTrackElement(track) {
   const trackElement = document.createElement('li');
   trackElement.className = 'spinbox-recently-hidden-track sc-mb-0.5x';
@@ -108,30 +131,7 @@ function createRecentlyHiddenTrackElement(track) {
   undoHideButton.innerText = '⟲';
   undoHideButton.ariaLabel = 'Un-Hide Track';
   undoHideButton.title = 'Un-Hide Track';
-
-  // Add click handler for undo
-  undoHideButton.onclick = async () => {
-    // Remove from hiddenTracks
-    delete spinbox.hiddenTracks[track.trackHref];
-
-    // Update storage
-    await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
-
-    // Remove hidden class from any matching tracks in the feed
-    document
-      .querySelectorAll('.soundList__item.spinbox-hidden')
-      .forEach((element) => {
-        const info = getSoundListElementInfo(element);
-        if (info.trackHref === track.trackHref) {
-          element.classList.remove('spinbox-hidden');
-        }
-      });
-
-    // Update the recently hidden tracks list
-    setupRecentlyHiddenTracks(); // needed to find the now nth recently hidden track
-    updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-    updateRecentlyHiddenTracksDescription(); // needed to restore the nth recent hidden track row
-  };
+  undoHideButton.onclick = () => undoHideTrack(track.trackHref);
 
   const hiddenTrackDescription = document.createElement('div');
   hiddenTrackDescription.className = 'spinbox-hidden-track-description';
