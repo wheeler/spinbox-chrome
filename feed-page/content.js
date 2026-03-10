@@ -1,6 +1,7 @@
 import { playNext } from './soundcloud-player';
 import {
   createHideTrackButton,
+  createNoHiddenTracksMessage,
   createRepostSvg,
   createSidebarElement,
 } from './new-elements';
@@ -14,7 +15,7 @@ import { getRecentElementsFromArray } from './data-helpers';
 
 console.log('spinbox loading');
 
-window.spinbox = window.spinbox || { settings: {}, digSettings: {} };
+const spinbox = { settings: {}, digSettings: {} };
 
 const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
 const digSettingsPromise = chrome.storage.local.get('digSettings');
@@ -23,7 +24,7 @@ const settingsPromise = chrome.storage.local.get('settings');
 // TODO: listen for messages
 
 async function hideSoundListElement(element) {
-  // re-read the info from the element. less data in closure and images may have been lazy loaded
+  // re-read the info from the element. less data in closure and images may have been lazy-loaded
   const info = getSoundListElementInfo(element);
   // set track as hidden in local var
   spinbox.hiddenTracks[info.trackHref] = {
@@ -45,7 +46,7 @@ async function hideSoundListElement(element) {
 
   // update sidebar content
   updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-  updateRecentlyHiddenTracksDescription(info);
+  addRecentlyHiddenTrack(info);
 }
 
 function processNewSoundListElements(soundListElements) {
@@ -111,7 +112,7 @@ async function undoHideTrack(trackHref) {
   // Update the recently hidden tracks list
   setupRecentlyHiddenTracks(); // needed to find the now nth recently hidden track
   updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-  updateRecentlyHiddenTracksDescription(); // needed to restore the nth recent hidden track row
+  refreshRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
 }
 
 function createRecentlyHiddenTrackElement(track) {
@@ -163,26 +164,23 @@ function createRecentlyHiddenTrackElement(track) {
   return trackElement;
 }
 
-function updateRecentlyHiddenTracksDescription(info) {
+function addRecentlyHiddenTrack(info) {
   const hiddenList = document.getElementById('recentlyHiddenTrackList');
   if (hiddenList) {
-    if (info) {
-      // we're adding a single new hidden track
-      const noHiddenTracks = document.getElementById('noHiddenTracks');
-      if (noHiddenTracks) {
-        noHiddenTracks.remove();
-      }
-      if (hiddenList.childElementCount > 4) {
-        hiddenList.removeChild(hiddenList.lastElementChild);
-      }
-      hiddenList.prepend(createRecentlyHiddenTrackElement(info));
-    } else if (spinbox.recentlyHiddenTracks) {
+    document.getElementById('noHiddenTracks')?.remove();
+    if (hiddenList.childElementCount > 4) {
+      hiddenList.removeChild(hiddenList.lastElementChild);
+    }
+    hiddenList.prepend(createRecentlyHiddenTrackElement(info));
+  }
+}
+
+function refreshRecentlyHiddenTracksList() {
+  const hiddenList = document.getElementById('recentlyHiddenTrackList');
+  if (hiddenList) {
+    if (spinbox.recentlyHiddenTracks) {
       if (spinbox.recentlyHiddenTracks.length === 0) {
-        const noHiddenTracks = document.createElement('li');
-        noHiddenTracks.id = 'noHiddenTracks';
-        noHiddenTracks.className = 'spinbox-recently-hidden-track sc-mb-0.5x';
-        noHiddenTracks.textContent = 'No hidden tracks yet';
-        hiddenList.replaceChildren(noHiddenTracks);
+        hiddenList.replaceChildren(createNoHiddenTracksMessage());
       } else {
         const tracks = spinbox.recentlyHiddenTracks.map((track) =>
           createRecentlyHiddenTrackElement(track)
@@ -228,14 +226,14 @@ async function setupMutationObserver() {
             'article.spinbox-sidebar'
           );
           if (!spinboxSidebar) {
-            const SCsidebarElement =
+            const streamSidebar =
               mutation.target.querySelector('div.streamSidebar');
-            if (!SCsidebarElement) {
+            if (!streamSidebar) {
               console.log('Spinbox - no sidebar?'); // when can this happen?
             } else {
-              SCsidebarElement.prepend(createSidebarElement());
+              streamSidebar.prepend(createSidebarElement());
               updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-              updateRecentlyHiddenTracksDescription();
+              refreshRecentlyHiddenTracksList();
             }
           }
 
@@ -278,7 +276,7 @@ async function loadHiddenTracks() {
   spinbox.hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
   setupRecentlyHiddenTracks(); // TODO: when list is long should we defer this?
   updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-  updateRecentlyHiddenTracksDescription();
+  refreshRecentlyHiddenTracksList();
 }
 
 async function loadSettings() {
