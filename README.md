@@ -2,10 +2,10 @@
 
 ![Screenshot of the SoundCloud feed with the SpinBox Extension active](/.github/images/spinbox_screenshot.png)
 
-Use the SoundCloud feed as like a music inbox. Dig for music faster and with less repetition.
+Use the SoundCloud feed as a music inbox. Dig for music faster and with less repetition.
 
 SoundCloud is a fantastic platform for music discovery, allowing you to follow artists and see new music they release.
-The feed page shows all your followed artist tracks in chronological order. This is a great tool for music discovery,
+The feed page shows all your "followed" artists tracks in chronological order. This is a great tool for music discovery,
 but has the downside that you cannot "pick up where you left off" if you return to the feed later. This extension
 allows you to persistently hide tracks from your feed so you won't have to sift through them all over again.
 
@@ -34,10 +34,10 @@ This extension works completely internally in the browser. All data is stored in
 No data is communicated or stored externally.</ins>
 
 ### Known quirks / issues:
-- Currently handles playlists or albums on the feed as one whole thing to hide instead of individual tracks.
+- Playlists and albums on the feed are handled as one whole thing to hide instead of individual tracks.
 - Hidden tracks can still be played in the SoundCloud UI. Example: if you hide a playing track and the next track is
 already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
-normally and the user can simply click another track to play it.
+normally, and the user can simply click another track to play it.
 
 ## Planned Features
 - "Dig" button – quickly add tracks to a playlist (and hide and move on to the next one)
@@ -53,7 +53,7 @@ normally and the user can simply click another track to play it.
   them, so it has been difficult to implement so far.
 - Allow configuration more easily either within the sidebar or opening a configuration page instead of the extension
 popup (which is relatively hidden to most users).
-- Prompt user in page when configuration is necessary.
+- Prompt the user in the page when configuration is necessary.
 - Multiple dig-playlists (crates)
 - Auto create dig playlist?
 - Auto 100-track limit for playlists?
@@ -62,5 +62,5 @@ popup (which is relatively hidden to most users).
 - Option to hide tracks already liked or already in playlists.
 - Optional Turbo mode(?)
   - Automatically hide every played track when the next track is played.
-  - Handle these cases: track ends, shift arrow, click to another track (minimum play time?)
+  - Handle these cases: track ends, shift arrow, click to another track (minimum playtime?)
   - Add a skip / don’t hide action
