@@ -4,25 +4,18 @@
  * @returns {{artistName: string, artistHref: string, trackName: string, trackHref: string, imageUrl: string, reposterName: string, reposterHref: string}}
  */
 export function getSoundListElementInfo(element) {
-  let artistName,
-    artistHref,
-    trackName,
-    trackHref,
-    imageUrl,
-    reposterName,
-    reposterHref;
+  let info = {};
 
   const artistElement = element.querySelector('a.soundTitle__username');
-  if (artistElement) {
-    artistHref = artistElement.getAttribute('href');
-    artistName = artistElement.innerText.trim();
-  }
+  info.artistHref = artistElement?.getAttribute('href');
+  const artistTextElement = element.querySelector(
+    'span.soundTitle__usernameText'
+  );
+  info.artistName = artistTextElement?.textContent?.trim();
 
   const titleElement = element.querySelector('a.soundTitle__title');
-  if (titleElement) {
-    trackHref = titleElement.getAttribute('href');
-    trackName = titleElement.innerText.trim();
-  }
+  info.trackHref = titleElement?.getAttribute('href');
+  info.trackName = titleElement?.textContent?.trim();
 
   const imageElement = element.querySelector(
     'div.sound__artwork span.image__full'
@@ -32,32 +25,24 @@ export function getSoundListElementInfo(element) {
     const bgImage = imageElement.style.backgroundImage;
     if (bgImage) {
       // Remove url("...") wrapper and get the actual URL
-      imageUrl = bgImage.replace(/^url\(['"](.+)['"]\)$/, '$1');
+      info.imageUrl = bgImage.replace(/^url\(['"](.+)['"]\)$/, '$1');
     }
   }
 
   const repostIndicator = element.querySelector('.soundContext__repost');
   if (repostIndicator) {
     const reposterElement = repostIndicator.previousElementSibling;
-    reposterHref = reposterElement.getAttribute('href');
-    reposterName = reposterElement.innerText.trim();
+    info.reposterHref = reposterElement?.getAttribute('href');
+    info.reposterName = reposterElement?.textContent?.trim();
   }
 
-  return {
-    artistName,
-    artistHref,
-    trackName,
-    trackHref,
-    imageUrl,
-    reposterName,
-    reposterHref,
-  };
+  return info;
 }
 
 export function soundListElementIsCurrentlyPlaying(element) {
   return element
-    .querySelector('div.sound.streamContext')
-    .classList.contains('playing');
+    .querySelector('div.soundTitle__playButton a.playButton')
+    .classList.contains('sc-button-pause');
 }
 
 export function updateHiddenTrackCount(newCount) {

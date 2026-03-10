@@ -1,5 +1,5 @@
 export default {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testMatch: ['**/*.test.js', '**/*.spec.js'],
   collectCoverageFrom: [
     '**/*.js',
@@ -7,5 +7,6 @@ export default {
     '!**/*.spec.js',
     '!node_modules/**',
   ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transform: {},
 };
