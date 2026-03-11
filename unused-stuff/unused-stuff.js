@@ -9,6 +9,9 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
 });
 
 // TODO: actually implement feature flag
+spinbox.digSettings = {};
+const digSettingsPromise = chrome.storage.local.get('digSettings');
+spinbox.digSettings = (await digSettingsPromise).digSettings || {};
 if (spinbox.digSettings.showDig) {
   const digButton = document.createElement('button');
   digButton.className =

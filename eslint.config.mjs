@@ -10,7 +10,6 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.webextensions,
-        spinbox: true,
       },
     },
     rules: {

@@ -11,33 +11,22 @@ import {
   soundListElementIsCurrentlyPlaying,
   updateHiddenTrackCount,
 } from './feed-dom-helpers';
-import { getRecentElementsFromArray } from './data-helpers';
+import SpinboxStorage from './data-storage.js';
 
 console.log('spinbox loading');
 
-const spinbox = { settings: {}, digSettings: {} };
-
-const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
-const digSettingsPromise = chrome.storage.local.get('digSettings');
-const settingsPromise = chrome.storage.local.get('settings');
+const spinboxStorage = new SpinboxStorage();
 
 // TODO: listen for messages
 
 async function hideSoundListElement(element) {
   // re-read the info from the element. less data in closure and images may have been lazy-loaded
   const info = getSoundListElementInfo(element);
-  // set track as hidden in local var
-  spinbox.hiddenTracks[info.trackHref] = {
-    ...info,
-    hiddenAt: new Date().toISOString(),
-    hiddenAtTs: Date.now(),
-  };
-  // set hidden in chrome storage
-  await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
+  await spinboxStorage.hideTrack(info);
   // hide element
   element.classList.add('spinbox-hidden');
 
-  // move to next track if playing. TODO: test more to make sure it's working.
+  // move to the next track if playing.
   if (soundListElementIsCurrentlyPlaying(element)) {
     playNext(element);
   }
@@ -45,7 +34,7 @@ async function hideSoundListElement(element) {
   forceLoadingMoreTracks();
 
   // update sidebar content
-  updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
+  updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
   addRecentlyHiddenTrack(info);
 }
 
@@ -64,8 +53,8 @@ function processNewSoundListElements(soundListElements) {
     element.classList.add('spinbox-processed');
 
     // hide if it should be hidden
-    const info = getSoundListElementInfo(element);
-    if (spinbox.hiddenTracks[info.trackHref]) {
+    const { trackHref } = getSoundListElementInfo(element);
+    if (spinboxStorage.trackIsHidden(trackHref)) {
       element.classList.add('spinbox-hidden');
       hidSomeElements = true;
     }
@@ -93,11 +82,7 @@ function processNewSoundListElements(soundListElements) {
 }
 
 async function undoHideTrack(trackHref) {
-  // Remove from hiddenTracks
-  delete spinbox.hiddenTracks[trackHref];
-
-  // Update storage
-  await chrome.storage.local.set({ hiddenTracks: spinbox.hiddenTracks });
+  await spinboxStorage.unhideTrack(trackHref);
 
   // Remove hidden class from any matching tracks in the feed
   document
@@ -109,10 +94,8 @@ async function undoHideTrack(trackHref) {
       }
     });
 
-  // Update the recently hidden tracks list
-  setupRecentlyHiddenTracks(); // needed to find the now nth recently hidden track
-  updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-  refreshRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
+  updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
+  renderRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
 }
 
 function createRecentlyHiddenTrackElement(track) {
@@ -175,31 +158,28 @@ function addRecentlyHiddenTrack(info) {
   }
 }
 
-function refreshRecentlyHiddenTracksList() {
+function renderRecentlyHiddenTracksList() {
   const hiddenList = document.getElementById('recentlyHiddenTrackList');
-  if (hiddenList) {
-    if (spinbox.recentlyHiddenTracks) {
-      if (spinbox.recentlyHiddenTracks.length === 0) {
-        hiddenList.replaceChildren(createNoHiddenTracksMessage());
-      } else {
-        const tracks = spinbox.recentlyHiddenTracks.map((track) =>
-          createRecentlyHiddenTrackElement(track)
-        );
-        hiddenList.replaceChildren(...tracks);
-      }
-    }
+  if (!hiddenList) return;
+
+  let newElements;
+  if (spinboxStorage.recentlyHiddenTracks.length === 0) {
+    newElements = [createNoHiddenTracksMessage()];
+  } else {
+    newElements = spinboxStorage.recentlyHiddenTracks.map((track) =>
+      createRecentlyHiddenTrackElement(track)
+    );
   }
+  hiddenList.replaceChildren(...newElements);
 }
 
-async function setupMutationObserver() {
+function setupMutationObserver() {
   const appNode = document.getElementById('app');
 
   if (!appNode) {
     console.error('Target node not found for MutationObserver.');
     return;
   }
-
-  await settingsPromise;
 
   // Callback function to execute when mutations are observed
   const callback = (mutations, _observer) => {
@@ -213,7 +193,7 @@ async function setupMutationObserver() {
           // handle the content element being initially populated (or re-populated on page navigation)
 
           // Set up the disable-visual-expand based on the setting
-          if (!spinbox.settings.overrideDisableVisualExpand) {
+          if (!spinboxStorage.settings.overrideDisableVisualExpand) {
             const streamList =
               mutation.target.querySelector('div.stream__list');
             if (streamList) {
@@ -232,8 +212,8 @@ async function setupMutationObserver() {
               console.log('Spinbox - no sidebar?'); // when can this happen?
             } else {
               streamSidebar.prepend(createSidebarElement());
-              updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-              refreshRecentlyHiddenTracksList();
+              updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
+              renderRecentlyHiddenTracksList();
             }
           }
 
@@ -272,30 +252,15 @@ async function setupMutationObserver() {
   observer.observe(appNode, observerConfig);
 }
 
-async function loadHiddenTracks() {
-  spinbox.hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
-  setupRecentlyHiddenTracks(); // TODO: when list is long should we defer this?
-  updateHiddenTrackCount(Object.keys(spinbox.hiddenTracks).length);
-  refreshRecentlyHiddenTracksList();
-}
-
-async function loadSettings() {
-  spinbox.digSettings = (await digSettingsPromise).digSettings || {};
-  spinbox.settings = (await settingsPromise).settings || {};
-}
-
-function setupRecentlyHiddenTracks() {
-  spinbox.recentlyHiddenTracks = getRecentElementsFromArray(
-    Object.values(spinbox.hiddenTracks),
-    'hiddenAtTs',
-    5
-  );
-}
-
 /** --------------------
  *    INITIALIZATION
  *----------------------- */
 
-loadSettings();
-loadHiddenTracks();
-setupMutationObserver();
+const init = async () => {
+  await spinboxStorage.initialLoad();
+  updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
+  renderRecentlyHiddenTracksList();
+  setupMutationObserver();
+};
+
+init();
