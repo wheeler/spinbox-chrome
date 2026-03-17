@@ -1,8 +1,8 @@
 # Spinbox Chrome Extension
 
-![Screenshot of the SoundCloud feed with the SpinBox Extension active](/.github/images/spinbox_screenshot.png)
-
 Use the SoundCloud feed as a music inbox. Dig for music faster and with less repetition.
+
+![Screenshot of the SoundCloud feed with the SpinBox Extension active](/.github/images/spinbox_screenshot.png)
 
 SoundCloud is a fantastic platform for music discovery, allowing you to follow artists and see new music they release.
 The feed page shows all your "followed" artists tracks in chronological order. This is a great tool for music discovery,
@@ -34,12 +34,14 @@ This extension works completely internally in the browser. All data is stored in
 No data is communicated or stored externally.</ins>
 
 ### Known quirks / issues:
+
 - Playlists and albums on the feed are handled as one whole thing to hide instead of individual tracks.
 - Hidden tracks can still be played in the SoundCloud UI. Example: if you hide a playing track and the next track is
-already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
-normally, and the user can simply click another track to play it.
+  already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
+  normally, and the user can simply click another track to play it.
 
 ## Planned Features
+
 - "Dig" button – quickly add tracks to a playlist (and hide and move on to the next one)
 - Global Show / Hide toggle
 - Hotkey operation for hide and dig
@@ -48,11 +50,12 @@ normally, and the user can simply click another track to play it.
 - Some visual representation for blocks of hidden tracks
 
 ### further future...
+
 - Use the SC API to manipulate playlists instead of faking user clicks.
   - Unfortunately, Soundcloud does not fully support either of their public APIs (v1 and v2) nor do they fully document
-  them, so it has been difficult to implement so far.
+    them, so it has been difficult to implement so far.
 - Allow configuration more easily either within the sidebar or opening a configuration page instead of the extension
-popup (which is relatively hidden to most users).
+  popup (which is relatively hidden to most users).
 - Prompt the user in the page when configuration is necessary.
 - Multiple dig-playlists (crates)
 - Auto create dig playlist?
