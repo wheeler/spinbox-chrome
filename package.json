@@ -17,12 +17,12 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@types/eslint": "^9.6.1",
     "@types/jest": "^30.0.0",
-    "chrome-types": "^0.1.415",
-    "esbuild": "^0.27.3",
+    "chrome-types": "^0.1.423",
+    "esbuild": "^0.27.4",
     "eslint": "^10.0.3",
     "globals": "^17.4.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.8.1"
   }
 }
