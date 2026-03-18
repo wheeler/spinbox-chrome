@@ -66,3 +66,15 @@ export function updateHiddenTrackCount(newCount) {
     }
   }
 }
+
+export function unhideTrackElementWithHref(targetHref) {
+  // Remove hidden class from any matching tracks in the feed
+  document
+    .querySelectorAll('.soundList__item.spinbox-hidden')
+    .forEach((element) => {
+      const { trackHref } = getSoundListElementInfo(element);
+      if (trackHref === targetHref) {
+        element.classList.remove('spinbox-hidden');
+      }
+    });
+}

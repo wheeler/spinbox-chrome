@@ -3,6 +3,7 @@ import {
   addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
   soundListElementIsCurrentlyPlaying,
+  unhideTrackElementWithHref,
   updateHiddenTrackCount,
 } from './feed-dom-helpers.js';
 import {
@@ -157,6 +158,58 @@ describe('soundListElementIsCurrentlyPlaying', () => {
     const trackElement = document.createElement('li');
     trackElement.innerHTML = currentlyPlayingTrackElementFromFeedPage;
     expect(soundListElementIsCurrentlyPlaying(trackElement)).toBe(true);
+  });
+});
+
+describe('unhideTrackElementWithHref', () => {
+  const trackList = `
+    <ul class="lazyLoadingList__list">
+      <li class="soundList__item spinbox-hidden">
+        <a href="/track/is-hidden" class="soundTitle__title">Snoozer</a>
+      </li>
+      <li class="soundList__item spinbox-hidden">
+        <a href="/track/is-also-hidden" class="soundTitle__title">Another Snoozer</a>
+      </li>
+      <li class="soundList__item">
+        <a href="/track/is-visible" class="soundTitle__title">Banger</a>
+      </li>
+      <li class="soundList__item">
+        <a href="/track/is-also-visible" class="soundTitle__title">Another Banger</a>
+      </li>
+    </ul>
+  `;
+
+  beforeEach(() => {
+    document.body.innerHTML = trackList;
+  });
+
+  it('does nothing to a visible tracks', () => {
+    unhideTrackElementWithHref('/track/is-visible');
+
+    // nothing should change
+    expect(document.body.innerHTML).toEqual(trackList);
+
+    // baseline test for checking the classes on the list items
+    const tracks = screen.getAllByRole('listitem');
+    expect(tracks[0]).toHaveClass('spinbox-hidden');
+    expect(tracks[1]).toHaveClass('spinbox-hidden');
+    expect(tracks[2]).not.toHaveClass('spinbox-hidden');
+    expect(tracks[3]).not.toHaveClass('spinbox-hidden');
+  });
+
+  it('removes the hidden class from a matching hidden track', () => {
+    unhideTrackElementWithHref('/track/is-hidden');
+
+    const tracks = screen.getAllByRole('listitem');
+    expect(tracks[0]).not.toHaveClass('spinbox-hidden');
+    expect(tracks[1]).toHaveClass('spinbox-hidden');
+    expect(tracks[2]).not.toHaveClass('spinbox-hidden');
+    expect(tracks[3]).not.toHaveClass('spinbox-hidden');
+  });
+
+  it('does nothing to non-matching tracks', () => {
+    unhideTrackElementWithHref('/track/not-matching');
+    expect(document.body.innerHTML).toEqual(trackList);
   });
 });
 

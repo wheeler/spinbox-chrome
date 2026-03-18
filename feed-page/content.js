@@ -10,6 +10,7 @@ import {
   addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
   soundListElementIsCurrentlyPlaying,
+  unhideTrackElementWithHref,
   updateHiddenTrackCount,
 } from './feed-dom-helpers';
 import SpinboxStorage from './data-storage.js';
@@ -84,17 +85,7 @@ function processNewSoundListElements(soundListElements) {
 
 async function undoHideTrack(trackHref) {
   await spinboxStorage.unhideTrack(trackHref);
-
-  // Remove hidden class from any matching tracks in the feed
-  document
-    .querySelectorAll('.soundList__item.spinbox-hidden')
-    .forEach((element) => {
-      const info = getSoundListElementInfo(element);
-      if (info.trackHref === trackHref) {
-        element.classList.remove('spinbox-hidden');
-      }
-    });
-
+  unhideTrackElementWithHref(trackHref);
   updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
   renderRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
 }
