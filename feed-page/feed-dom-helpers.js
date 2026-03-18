@@ -1,4 +1,13 @@
 /**
+ * add flag to a stream list within the contentElement
+ * @param contentElement
+ */
+export function addDisableVisualExpandFlagToStreamList(contentElement) {
+  const addedStreamList = contentElement?.querySelector('div.stream__list');
+  addedStreamList?.classList.add('spinbox-disable-visual-expand');
+}
+
+/**
  * Extract Track Info from the SoundList element
  * @param element {HTMLElement}
  * @returns {{artistName: string, artistHref: string, trackName: string, trackHref: string, imageUrl: string, reposterName: string, reposterHref: string}}

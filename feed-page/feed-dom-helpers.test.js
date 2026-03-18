@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom';
 import {
+  addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
   soundListElementIsCurrentlyPlaying,
   updateHiddenTrackCount,
@@ -12,6 +13,53 @@ import {
   trackElementFromArtistPage,
   trackElementFromFeedPage,
 } from './__fixtures__/feed-dom-helpers.fixtures.js';
+
+describe('addDisableVisualExpandFlagToStreamList', () => {
+  describe('when an element is passed', () => {
+    let content;
+
+    const contentWithStreamList = `
+      <div>
+        <div class="stream">
+          <div class="stream__list">
+          </div>
+        </div>
+      </div>
+    `;
+
+    const contentWithoutStreamList = `
+      <div>
+        <div class="stream">
+          <div class="unknown">
+          </div>
+        </div>
+      </div>
+    `;
+
+    beforeEach(() => {
+      content = document.createElement('div');
+    });
+
+    it('adds the class to there is nested stream__list', () => {
+      content.innerHTML = contentWithStreamList;
+      addDisableVisualExpandFlagToStreamList(content);
+      expect(content.innerHTML).not.toEqual(contentWithoutStreamList); // changed
+      expect(content.querySelector('.stream__list')).toHaveClass(
+        'spinbox-disable-visual-expand'
+      );
+    });
+
+    it('does nothing if there is no stream_list', () => {
+      content.innerHTML = contentWithoutStreamList;
+      addDisableVisualExpandFlagToStreamList(content);
+      expect(content.innerHTML).toEqual(contentWithoutStreamList); // no change
+    });
+  });
+
+  it('does not error if no element passed', () => {
+    addDisableVisualExpandFlagToStreamList();
+  });
+});
 
 describe('getSoundListElementInfo', () => {
   it('returns correct info for a track element from the feed page', () => {

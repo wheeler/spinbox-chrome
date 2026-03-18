@@ -7,6 +7,7 @@ import {
 } from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
+  addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
   soundListElementIsCurrentlyPlaying,
   updateHiddenTrackCount,
@@ -145,11 +146,7 @@ function setupMutationObserver() {
 
           // Set up the disable-visual-expand based on the setting
           if (!spinboxStorage.settings.overrideDisableVisualExpand) {
-            const streamList =
-              mutation.target.querySelector('div.stream__list');
-            if (streamList) {
-              streamList.classList.add('spinbox-disable-visual-expand');
-            }
+            addDisableVisualExpandFlagToStreamList(mutation.target);
           }
 
           // Create the sidebar
