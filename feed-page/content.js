@@ -2,7 +2,7 @@ import { playNext } from './soundcloud-player';
 import {
   createHideTrackButton,
   createNoHiddenTracksMessage,
-  createRepostSvg,
+  createRecentlyHiddenTrackElement,
   createSidebarElement,
 } from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
@@ -98,55 +98,6 @@ async function undoHideTrack(trackHref) {
   renderRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
 }
 
-function createRecentlyHiddenTrackElement(track) {
-  const trackElement = document.createElement('li');
-  trackElement.className = 'spinbox-recently-hidden-track sc-mb-0.5x';
-
-  const imageContainer = document.createElement('span');
-  imageContainer.className = 'spinbox-track-image';
-  if (track.imageUrl) {
-    imageContainer.style.backgroundImage = `url('${track.imageUrl}')`;
-  }
-  trackElement.appendChild(imageContainer);
-
-  const undoHideButton = document.createElement('button');
-  undoHideButton.className =
-    'spinbox-undo-hide-button sc-button sc-button-secondary';
-  undoHideButton.innerText = '⟲';
-  undoHideButton.ariaLabel = 'Un-Hide Track';
-  undoHideButton.title = 'Un-Hide Track';
-  undoHideButton.onclick = () => undoHideTrack(track.trackHref);
-
-  const hiddenTrackDescription = document.createElement('div');
-  hiddenTrackDescription.className = 'spinbox-hidden-track-description';
-
-  const hiddenTrackDescriptionArtist = document.createElement('div');
-  hiddenTrackDescriptionArtist.className =
-    'spinbox-hidden-track-description-artist';
-  if (track.reposterName) {
-    hiddenTrackDescriptionArtist.appendChild(
-      document.createTextNode(track.reposterName)
-    );
-    hiddenTrackDescriptionArtist.appendChild(createRepostSvg());
-  }
-  hiddenTrackDescriptionArtist.appendChild(
-    document.createTextNode(track.artistName)
-  );
-
-  const hiddenTrackDescriptionTrack = document.createElement('div');
-  hiddenTrackDescriptionTrack.className =
-    'spinbox-hidden-track-description-track';
-  hiddenTrackDescriptionTrack.innerText = track.trackName;
-
-  hiddenTrackDescription.appendChild(hiddenTrackDescriptionArtist);
-  hiddenTrackDescription.appendChild(hiddenTrackDescriptionTrack);
-
-  trackElement.appendChild(hiddenTrackDescription);
-  trackElement.appendChild(undoHideButton);
-
-  return trackElement;
-}
-
 function addRecentlyHiddenTrack(info) {
   const hiddenList = document.getElementById('recentlyHiddenTrackList');
   if (hiddenList) {
@@ -154,7 +105,7 @@ function addRecentlyHiddenTrack(info) {
     if (hiddenList.childElementCount > 4) {
       hiddenList.removeChild(hiddenList.lastElementChild);
     }
-    hiddenList.prepend(createRecentlyHiddenTrackElement(info));
+    hiddenList.prepend(createRecentlyHiddenTrackElement(info, undoHideTrack));
   }
 }
 
@@ -167,7 +118,7 @@ function renderRecentlyHiddenTracksList() {
     newElements = [createNoHiddenTracksMessage()];
   } else {
     newElements = spinboxStorage.recentlyHiddenTracks.map((track) =>
-      createRecentlyHiddenTrackElement(track)
+      createRecentlyHiddenTrackElement(track, undoHideTrack)
     );
   }
   hiddenList.replaceChildren(...newElements);
