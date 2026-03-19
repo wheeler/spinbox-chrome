@@ -1,3 +1,8 @@
+import {
+  createNoHiddenTracksMessage,
+  createRecentlyHiddenTrackElement,
+} from './new-elements.js';
+
 /**
  * add flag to a stream list within the contentElement
  * @param contentElement
@@ -77,4 +82,22 @@ export function unhideTrackElementWithHref(targetHref) {
         element.classList.remove('spinbox-hidden');
       }
     });
+}
+
+export function renderRecentlyHiddenTracksList(
+  recentlyHiddenTracks,
+  undoHideFn
+) {
+  const hiddenList = document.getElementById('recentlyHiddenTrackList');
+  if (!hiddenList) return;
+
+  let newElements;
+  if (recentlyHiddenTracks.length === 0) {
+    newElements = [createNoHiddenTracksMessage()];
+  } else {
+    newElements = recentlyHiddenTracks.map((track) =>
+      createRecentlyHiddenTrackElement(track, undoHideFn)
+    );
+  }
+  hiddenList.replaceChildren(...newElements);
 }

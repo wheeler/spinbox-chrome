@@ -1,7 +1,6 @@
 import { playNext } from './soundcloud-player';
 import {
   createHideTrackButton,
-  createNoHiddenTracksMessage,
   createRecentlyHiddenTrackElement,
   createSidebarElement,
 } from './new-elements';
@@ -9,6 +8,7 @@ import { forceLoadingMoreTracks } from './page-utilities';
 import {
   addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
+  renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
@@ -74,7 +74,7 @@ function processNewSoundListElements(soundListElements) {
       buttons.push(hideButton);
 
       buttons[0].style.marginLeft = 'auto'; // left align all buttons
-      buttons.forEach((button) => contextElement.appendChild(button));
+      contextElement.append(...buttons);
     }
   });
 
@@ -83,11 +83,18 @@ function processNewSoundListElements(soundListElements) {
   }
 }
 
+function renderRecentlyHiddenTracksListWithContext() {
+  renderRecentlyHiddenTracksList(
+    spinboxStorage.recentlyHiddenTracks,
+    undoHideTrack
+  );
+}
+
 async function undoHideTrack(trackHref) {
   await spinboxStorage.unhideTrack(trackHref);
   unhideTrackElementWithHref(trackHref);
   updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-  renderRecentlyHiddenTracksList(); // needed to restore the nth recent hidden track row
+  renderRecentlyHiddenTracksListWithContext(); // needed to restore the nth recent hidden track row
 }
 
 function addRecentlyHiddenTrack(info) {
@@ -99,21 +106,6 @@ function addRecentlyHiddenTrack(info) {
     }
     hiddenList.prepend(createRecentlyHiddenTrackElement(info, undoHideTrack));
   }
-}
-
-function renderRecentlyHiddenTracksList() {
-  const hiddenList = document.getElementById('recentlyHiddenTrackList');
-  if (!hiddenList) return;
-
-  let newElements;
-  if (spinboxStorage.recentlyHiddenTracks.length === 0) {
-    newElements = [createNoHiddenTracksMessage()];
-  } else {
-    newElements = spinboxStorage.recentlyHiddenTracks.map((track) =>
-      createRecentlyHiddenTrackElement(track, undoHideTrack)
-    );
-  }
-  hiddenList.replaceChildren(...newElements);
 }
 
 function setupMutationObserver() {
@@ -152,7 +144,7 @@ function setupMutationObserver() {
             } else {
               streamSidebar.prepend(createSidebarElement());
               updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-              renderRecentlyHiddenTracksList();
+              renderRecentlyHiddenTracksListWithContext();
             }
           }
 
@@ -198,7 +190,7 @@ function setupMutationObserver() {
 const init = async () => {
   await spinboxStorage.initialLoad();
   updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-  renderRecentlyHiddenTracksList();
+  renderRecentlyHiddenTracksListWithContext();
   setupMutationObserver();
 };
 

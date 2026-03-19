@@ -15,20 +15,13 @@ export function createSidebarElement() {
   title.style.padding = '8px 16px';
   const hiddenTrackCount = document.createElement('span');
   hiddenTrackCount.id = 'hiddenTracksCount';
-  title.appendChild(hiddenTrackCount);
-  title.append(' hidden track');
   const hiddenTracksPlural = document.createElement('span');
   hiddenTracksPlural.id = 'hiddenTracksPlural';
   hiddenTracksPlural.textContent = 's';
-  title.appendChild(hiddenTracksPlural);
-  spinboxSidebar.appendChild(title);
+  title.append(hiddenTrackCount, ' hidden track', hiddenTracksPlural);
 
   const content = document.createElement('div');
   content.className = 'sidebarContent';
-
-  const contentDescription = document.createElement('div');
-  contentDescription.style.padding = '8px 16px';
-  contentDescription.textContent = 'spinbox is active.';
 
   const recentlyHidden = document.createElement('div');
   recentlyHidden.id = 'recentlyHiddenTracksContainer';
@@ -37,13 +30,12 @@ export function createSidebarElement() {
   recentlyHiddenTitle.innerText = 'Recently hidden';
   recentlyHiddenTitle.className =
     'sc-text-secondary sidebarHeader__title__webi__style sc-mb-1x';
-  recentlyHidden.appendChild(recentlyHiddenTitle);
-  content.appendChild(recentlyHidden);
   const recentlyHiddenList = document.createElement('div');
   recentlyHiddenList.id = 'recentlyHiddenTrackList';
-  recentlyHidden.appendChild(recentlyHiddenList);
+  recentlyHidden.append(recentlyHiddenTitle, recentlyHiddenList);
 
-  spinboxSidebar.appendChild(content);
+  content.append(recentlyHidden);
+  spinboxSidebar.append(title, content);
   return spinboxSidebar;
 }
 
@@ -92,7 +84,7 @@ export function createRecentlyHiddenTrackElement(track, undoHideTrackFn) {
   if (track.imageUrl) {
     imageContainer.style.backgroundImage = `url('${track.imageUrl}')`;
   }
-  trackElement.appendChild(imageContainer);
+  trackElement.append(imageContainer);
 
   const undoHideButton = document.createElement('button');
   undoHideButton.className =
@@ -109,25 +101,22 @@ export function createRecentlyHiddenTrackElement(track, undoHideTrackFn) {
   hiddenTrackDescriptionArtist.className =
     'spinbox-hidden-track-description-artist';
   if (track.reposterName) {
-    hiddenTrackDescriptionArtist.appendChild(
-      document.createTextNode(track.reposterName)
-    );
-    hiddenTrackDescriptionArtist.appendChild(createRepostSvg());
+    hiddenTrackDescriptionArtist.append(track.reposterName);
+    hiddenTrackDescriptionArtist.append(createRepostSvg());
   }
-  hiddenTrackDescriptionArtist.appendChild(
-    document.createTextNode(track.artistName)
-  );
+  hiddenTrackDescriptionArtist.append(track.artistName);
 
   const hiddenTrackDescriptionTrack = document.createElement('div');
   hiddenTrackDescriptionTrack.className =
     'spinbox-hidden-track-description-track';
-  hiddenTrackDescriptionTrack.innerText = track.trackName;
+  hiddenTrackDescriptionTrack.append(track.trackName);
 
-  hiddenTrackDescription.appendChild(hiddenTrackDescriptionArtist);
-  hiddenTrackDescription.appendChild(hiddenTrackDescriptionTrack);
+  hiddenTrackDescription.append(
+    hiddenTrackDescriptionArtist,
+    hiddenTrackDescriptionTrack
+  );
 
-  trackElement.appendChild(hiddenTrackDescription);
-  trackElement.appendChild(undoHideButton);
+  trackElement.append(hiddenTrackDescription, undoHideButton);
 
   return trackElement;
 }

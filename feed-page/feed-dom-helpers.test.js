@@ -1,7 +1,9 @@
-import { screen } from '@testing-library/dom';
+import { screen, within } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
   getSoundListElementInfo,
+  renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
@@ -143,6 +145,76 @@ describe('getSoundListElementInfo', () => {
         // reposterName: 'Of The Trees',
         // reposterHref: '/ofthetrees',
       });
+    });
+  });
+});
+
+describe('renderRecentlyHiddenTracksList', () => {
+  const mockUndoHideTrack = jest.fn();
+  let hiddenTrackList;
+
+  beforeEach(() => {
+    hiddenTrackList = [];
+    document.body.innerHTML = `
+      <div>
+        <div id="recentlyHiddenTrackList"></div>
+      </div>
+    `;
+  });
+
+  describe('when there are no hidden tracks', () => {
+    it('renders a message when there are no hidden tracks', () => {
+      renderRecentlyHiddenTracksList(hiddenTrackList, mockUndoHideTrack);
+      expect(screen.getByRole('listitem')).toHaveTextContent(
+        'No hidden tracks yet'
+      );
+    });
+  });
+
+  describe('when there are hidden tracks', () => {
+    beforeEach(() => {
+      hiddenTrackList = [
+        {
+          trackHref: '/artist/track-name',
+          artistName: 'The Artist',
+          trackName: 'The Track',
+        },
+        {
+          trackHref: '/another-artist/another-track-name',
+          artistName: 'Another Artist',
+          trackName: 'Another Track',
+        },
+      ];
+    });
+
+    it('renders the list of recently hidden tracks', () => {
+      renderRecentlyHiddenTracksList(hiddenTrackList, mockUndoHideTrack);
+
+      const renderedItems = screen.getAllByRole('listitem');
+      expect(renderedItems).toHaveLength(2);
+      expect(renderedItems[0]).toHaveTextContent('The Artist');
+      expect(renderedItems[0]).toHaveTextContent('The Track');
+      expect(renderedItems[1]).toHaveTextContent('Another Artist');
+      expect(renderedItems[1]).toHaveTextContent('Another Track');
+    });
+
+    it('renders undo buttons for the hidden tracks', async () => {
+      renderRecentlyHiddenTracksList(hiddenTrackList, mockUndoHideTrack);
+
+      const renderedItems = screen.getAllByRole('listitem');
+      expect(renderedItems).toHaveLength(2);
+
+      const undoButton = within(renderedItems[0]).getByRole('button');
+      expect(undoButton).toBeInTheDocument();
+      await userEvent.click(undoButton);
+      expect(mockUndoHideTrack).toHaveBeenCalledWith('/artist/track-name');
+
+      const undoButton2 = within(renderedItems[1]).getByRole('button');
+      expect(undoButton2).toBeInTheDocument();
+      await userEvent.click(undoButton2);
+      expect(mockUndoHideTrack).toHaveBeenCalledWith(
+        '/another-artist/another-track-name'
+      );
     });
   });
 });
