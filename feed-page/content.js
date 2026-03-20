@@ -15,7 +15,7 @@ import {
 } from './feed-dom-helpers';
 import SpinboxStorage from './data-storage.js';
 
-console.log('spinbox loading');
+console.log('Spinbox - loading');
 
 const spinboxStorage = new SpinboxStorage();
 
@@ -62,8 +62,8 @@ function processNewSoundListElements(soundListElements) {
     }
 
     // add buttons to the "context" element - which sits above the track player in the feed
-    // (designed to handle multiple buttons)
     const contextElement = element.querySelector('div.soundContext');
+    // (layout is designed to handle multiple buttons in the future)
     const buttons = [];
     if (contextElement) {
       // TODO: add "dig" button
@@ -136,6 +136,7 @@ function setupSpinboxSidebarElement(contentElement) {
  * -- process any SoundListElements that are already in the added content
  */
 function setupContentMutationObserver() {
+  console.log('Spinbox - setting up content observer');
   const contentNode = document.getElementById('content');
   if (!contentNode) {
     console.warn(
@@ -172,9 +173,14 @@ function setupContentMutationObserver() {
           'li.soundList__item:not(.spinbox-processed)'
         );
         processNewSoundListElements(existingSoundListItems);
+
+        // set up the list observer
+        const lazyList = newContent.querySelector('.lazyLoadingList');
+        setupSoundListMutationObserver(lazyList);
       }
     });
   };
+
   const contentObserver = new MutationObserver(onContentMutation);
   contentObserver.observe(contentNode, { childList: true, subtree: false });
 }
@@ -182,19 +188,16 @@ function setupContentMutationObserver() {
 /**
  * This mutation observer handles SoundListItems added dynamically to the page.
  * These are nodes of class 'soundList__item' are added to the 'lazyLoadingList__list'
- * This happens in initial page population and when scrolling causes more track to load.
+ * This happens during the initial page population and when scrolling causes more track to load.
  */
-function setupSoundListMutationObserver() {
-  // TODO: investigate if we can reduce the scope of this MutationObserver
-  const appNode = document.getElementById('app');
-
-  if (!appNode) {
+function setupSoundListMutationObserver(targetNode) {
+  if (!targetNode) {
     console.error('Target node not found for MutationObserver.');
     return;
   }
+  console.log('Spinbox - setting up sound list observer');
 
-  // Callback function to execute when mutations are observed
-  const callback = (mutations, _observer) => {
+  const onSoundListMutation = (mutations, _observer) => {
     const addedSoundListItems = [];
     for (const mutation of mutations) {
       if (mutation.type === 'childList' && mutation.addedNodes.length) {
@@ -211,20 +214,12 @@ function setupSoundListMutationObserver() {
         }
       }
     }
-    // if either of these mutations resulted in new added items - process them now
-    if (addedSoundListItems.length !== 0) {
-      processNewSoundListElements(addedSoundListItems);
-    }
+    // process any added items
+    processNewSoundListElements(addedSoundListItems);
   };
 
-  // Create an observer instance linked to the callback function
-  const observer = new MutationObserver(callback);
-
-  // Options for the observer (which mutations to observe)
-  const observerConfig = { attributes: false, childList: true, subtree: true };
-
-  // Start observing the target node for configured mutations
-  observer.observe(appNode, observerConfig);
+  const observer = new MutationObserver(onSoundListMutation);
+  observer.observe(targetNode, { childList: true, subtree: true });
 }
 
 /** --------------------
@@ -234,7 +229,6 @@ function setupSoundListMutationObserver() {
 const init = async () => {
   await spinboxStorage.initialLoad();
   setupContentMutationObserver();
-  setupSoundListMutationObserver();
 };
 
 init();
