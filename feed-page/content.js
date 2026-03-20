@@ -108,7 +108,84 @@ function addRecentlyHiddenTrack(info) {
   }
 }
 
-function setupMutationObserver() {
+function setupSpinboxSidebarElement(contentElement) {
+  if (!contentElement) return;
+  const streamSidebar = contentElement.querySelector('div.streamSidebar');
+  if (!streamSidebar) {
+    console.log(
+      'Spinbox cannot add sidebar element - no SoundCloud sidebar found?'
+    );
+    return;
+  }
+
+  // Add spinbox sidebar element
+  let spinboxSidebar = contentElement.querySelector('.spinbox-sidebar');
+  if (!spinboxSidebar) {
+    spinboxSidebar = createSidebarElement();
+    streamSidebar.prepend(spinboxSidebar);
+  }
+
+  updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
+  renderRecentlyHiddenTracksListWithContext();
+}
+
+/**
+ * This mutation observer handles changes to id='content' (while on feed page)
+ * -- apply the 'spinbox-disable-visual-expand' class
+ * -- create the spinbox sidebar element if absent
+ * -- process any SoundListElements that are already in the added content
+ */
+function setupContentMutationObserver() {
+  const contentNode = document.getElementById('content');
+  if (!contentNode) {
+    console.warn(
+      'Spinbox - tried to set up content observer when #content did not exist.'
+    );
+    return;
+  }
+
+  const onContentMutation = (mutations) => {
+    mutations.forEach((mutation) => {
+      if (
+        mutation.type === 'childList' &&
+        mutation.addedNodes.length &&
+        mutation.target.baseURI.endsWith('feed')
+      ) {
+        const [newContent] = mutation.addedNodes;
+        if (mutation.addedNodes.length > 1) {
+          console.warn(
+            'Spinbox - expected content to be replaced with a single node but was multiple.'
+          );
+        }
+
+        // Add the disable-visual-expand class based on the setting
+        if (!spinboxStorage.settings.overrideDisableVisualExpand) {
+          addDisableVisualExpandFlagToStreamList(newContent);
+        }
+
+        // Create and fill in the sidebar element
+        setupSpinboxSidebarElement(newContent);
+
+        // check for already loaded but unprocessed nodes
+        // seems to happen on SPA navigation returning to the feed from another page
+        const existingSoundListItems = mutation.target.querySelectorAll(
+          'li.soundList__item:not(.spinbox-processed)'
+        );
+        processNewSoundListElements(existingSoundListItems);
+      }
+    });
+  };
+  const contentObserver = new MutationObserver(onContentMutation);
+  contentObserver.observe(contentNode, { childList: true, subtree: false });
+}
+
+/**
+ * This mutation observer handles SoundListItems added dynamically to the page.
+ * These are nodes of class 'soundList__item' are added to the 'lazyLoadingList__list'
+ * This happens in initial page population and when scrolling causes more track to load.
+ */
+function setupSoundListMutationObserver() {
+  // TODO: investigate if we can reduce the scope of this MutationObserver
   const appNode = document.getElementById('app');
 
   if (!appNode) {
@@ -122,39 +199,6 @@ function setupMutationObserver() {
     for (const mutation of mutations) {
       if (mutation.type === 'childList' && mutation.addedNodes.length) {
         if (
-          mutation.target.id === 'content' &&
-          mutation.target.baseURI.endsWith('feed')
-        ) {
-          // handle the content element being initially populated (or re-populated on page navigation)
-
-          // Set up the disable-visual-expand based on the setting
-          if (!spinboxStorage.settings.overrideDisableVisualExpand) {
-            addDisableVisualExpandFlagToStreamList(mutation.target);
-          }
-
-          // Create the sidebar
-          const spinboxSidebar = mutation.target.querySelector(
-            'article.spinbox-sidebar'
-          );
-          if (!spinboxSidebar) {
-            const streamSidebar =
-              mutation.target.querySelector('div.streamSidebar');
-            if (!streamSidebar) {
-              console.log('Spinbox - no sidebar?'); // when can this happen?
-            } else {
-              streamSidebar.prepend(createSidebarElement());
-              updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-              renderRecentlyHiddenTracksListWithContext();
-            }
-          }
-
-          // check for already loaded but unprocessed nodes - seems to happen on navigation returning to the feed
-          const existingSoundListItems = mutation.target.querySelectorAll(
-            'li.soundList__item:not(.spinbox-processed)'
-          );
-          if (existingSoundListItems && existingSoundListItems.length)
-            addedSoundListItems.push(...existingSoundListItems);
-        } else if (
           mutation.target.classList.contains('lazyLoadingList__list') &&
           mutation.target.baseURI.endsWith('feed')
         ) {
@@ -189,9 +233,8 @@ function setupMutationObserver() {
 
 const init = async () => {
   await spinboxStorage.initialLoad();
-  updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-  renderRecentlyHiddenTracksListWithContext();
-  setupMutationObserver();
+  setupContentMutationObserver();
+  setupSoundListMutationObserver();
 };
 
 init();
