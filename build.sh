@@ -24,6 +24,8 @@ echo "✓ Bundled: feed-page/content.js"
 # Copy files that don't need bundling
 files=(
   "README.md"
+  "CHANGELOG.md"
+  "LICENSE"
   "manifest.json"
   "popup"
   "feed-page/feed-page.css"

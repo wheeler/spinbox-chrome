@@ -3,7 +3,6 @@
   "name": "Spinbox",
   "version": "0.0.1",
   "description": "Feed tools for SoundCloud that help you sort through new music more efficiently.",
-
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",

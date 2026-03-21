@@ -33,27 +33,31 @@ waveform twice). This feature is optional and can be disabled in the extension s
 This extension works completely internally in the browser. All data is stored in the browser's extension storage. <ins>
 No data is communicated or stored externally.</ins>
 
+### Open Source
+
+Open source (GPLv3). Source code is hosted on GitHub at https://github.com/wheeler/spinbox-chrome
+
 ### Known quirks / issues:
 
-- Playlists and albums on the feed are handled as one whole thing to hide instead of individual tracks.
+- Playlists and albums on the feed are handled as one whole unit to hide instead of individual tracks.
 - Hidden tracks can still be played in the SoundCloud UI. Example: if you hide a playing track and the next track is
   already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
-  normally, and the user can simply click another track to play it.
+  normally and shows the playing track even if it is hidden. The user can simply click another track to play it.
 
 ## Planned Features
 
 - "Dig" button – quickly add tracks to a playlist (and hide and move on to the next one)
 - Global Show / Hide toggle
 - Hotkey operation for hide and dig
+- Some visual representation for blocks of hidden tracks
 - Optional feature to auto-hide tracks above a certain length
 - Improve handling of playlists / albums that appear in the feed
-- Some visual representation for blocks of hidden tracks
 
 ### further future...
 
 - Use the SC API to manipulate playlists instead of faking user clicks.
   - Unfortunately, Soundcloud does not fully support either of their public APIs (v1 and v2) nor do they fully document
-    them, so it has been difficult to implement so far.
+    them, so it has been challenging to implement so far.
 - Allow configuration more easily either within the sidebar or opening a configuration page instead of the extension
   popup (which is relatively hidden to most users).
 - Prompt the user in the page when configuration is necessary.
