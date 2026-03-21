@@ -32,4 +32,4 @@ jobs:
     - name: Run ESLint
       run: yarn eslint
     - name: Run Prettier
-      run: yarn prettier . -l
+      run: yarn prettier:list
