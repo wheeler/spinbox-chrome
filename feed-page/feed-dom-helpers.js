@@ -2,6 +2,7 @@ import {
   createNoHiddenTracksMessage,
   createRecentlyHiddenTrackElement,
 } from './new-elements.js';
+import { NUM_RECENT_HIDDEN_TRACKS_DISPLAYED } from './data-storage.js';
 
 /**
  * add flag to a stream list within the contentElement
@@ -57,6 +58,17 @@ export function soundListElementIsCurrentlyPlaying(element) {
   return element
     .querySelector('div.soundTitle__playButton a.playButton')
     .classList.contains('sc-button-pause');
+}
+
+export function addRecentlyHiddenTrack(info, undoHideFn) {
+  const hiddenList = document.getElementById('recentlyHiddenTrackList');
+  if (hiddenList) {
+    document.getElementById('noHiddenTracks')?.remove();
+    if (hiddenList.childElementCount === NUM_RECENT_HIDDEN_TRACKS_DISPLAYED) {
+      hiddenList.removeChild(hiddenList.lastElementChild);
+    }
+    hiddenList.prepend(createRecentlyHiddenTrackElement(info, undoHideFn));
+  }
 }
 
 export function updateHiddenTrackCount(newCount) {

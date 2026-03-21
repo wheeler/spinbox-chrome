@@ -1,19 +1,16 @@
 import { playNext } from './soundcloud-player';
-import {
-  createHideTrackButton,
-  createRecentlyHiddenTrackElement,
-  createSidebarElement,
-} from './new-elements';
+import { createHideTrackButton, createSidebarElement } from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
   addDisableVisualExpandFlagToStreamList,
+  addRecentlyHiddenTrack,
   getSoundListElementInfo,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
 } from './feed-dom-helpers';
-import SpinboxStorage from './data-storage.js';
+import SpinboxStorage from './data-storage';
 
 console.log('Spinbox - loading');
 
@@ -37,7 +34,7 @@ async function hideSoundListElement(element) {
 
   // update sidebar content
   updateHiddenTrackCount(spinboxStorage.hiddenTrackCount());
-  addRecentlyHiddenTrack(info);
+  addRecentlyHiddenTrack(info, undoHideTrack);
 }
 
 function processNewSoundListElements(soundListElements) {
@@ -97,17 +94,6 @@ async function undoHideTrack(trackHref) {
   renderRecentlyHiddenTracksListWithContext(); // needed to restore the nth recent hidden track row
 }
 
-function addRecentlyHiddenTrack(info) {
-  const hiddenList = document.getElementById('recentlyHiddenTrackList');
-  if (hiddenList) {
-    document.getElementById('noHiddenTracks')?.remove();
-    if (hiddenList.childElementCount > 4) {
-      hiddenList.removeChild(hiddenList.lastElementChild);
-    }
-    hiddenList.prepend(createRecentlyHiddenTrackElement(info, undoHideTrack));
-  }
-}
-
 function setupSpinboxSidebarElement(contentElement) {
   if (!contentElement) return;
   const streamSidebar = contentElement.querySelector('div.streamSidebar');
@@ -130,7 +116,7 @@ function setupSpinboxSidebarElement(contentElement) {
 }
 
 /**
- * This mutation observer handles changes to id='content' (while on feed page)
+ * This mutation observer handles changes to id='content' (while on the feed page)
  * -- apply the 'spinbox-disable-visual-expand' class
  * -- create the spinbox sidebar element if absent
  * -- process any SoundListElements that are already in the added content

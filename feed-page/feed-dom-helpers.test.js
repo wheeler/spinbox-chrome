@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
+  addRecentlyHiddenTrack,
   getSoundListElementInfo,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
@@ -145,6 +146,111 @@ describe('getSoundListElementInfo', () => {
         // reposterName: 'Of The Trees',
         // reposterHref: '/ofthetrees',
       });
+    });
+  });
+});
+
+describe('addRecentlyHiddenTrack', () => {
+  const mockUndoHideTrack = jest.fn();
+  const newlyHiddenTrack = {
+    trackHref: '/artist/track-name',
+    artistName: 'The Artist',
+    trackName: 'The Track',
+  };
+
+  describe('when there is a no hidden tracks message', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+      <div>
+        <div id="recentlyHiddenTrackList">
+          <li id="noHiddenTracks">No hidden tracks</li>
+        </div>
+      </div>
+    `;
+    });
+
+    it('replaces the no hidden tracks message with the track', () => {
+      let listItem = screen.getByRole('listitem');
+      expect(listItem).toHaveTextContent('No hidden tracks');
+
+      addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
+
+      // note: getByRole implies only one found
+      listItem = screen.getByRole('listitem');
+      expect(listItem).toHaveTextContent('The Artist');
+      expect(listItem).toHaveTextContent('The Track');
+      expect(listItem).not.toHaveTextContent('No hidden tracks');
+    });
+
+    it('renders an undo button for the hidden track', async () => {
+      addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
+
+      const listItem = screen.getByRole('listitem');
+      const undoButton = within(listItem).getByRole('button');
+      expect(undoButton).toBeInTheDocument();
+      await userEvent.click(undoButton);
+      expect(mockUndoHideTrack).toHaveBeenCalledWith('/artist/track-name');
+    });
+  });
+
+  describe('when there were already hidden tracks', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+      <div>
+        <div id="recentlyHiddenTrackList">
+          <li>Fake Track 1</li>
+          <li>Fake Track 2</li>
+          <li>Fake Track 3</li>
+        </div>
+      </div>
+    `;
+    });
+
+    it('adds the hidden track at the top', () => {
+      let listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(3);
+
+      addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
+
+      listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(4);
+      expect(listItems[0]).toHaveTextContent('The Artist');
+      expect(listItems[0]).toHaveTextContent('The Track');
+      expect(listItems[1]).toHaveTextContent('Fake Track 1');
+      expect(listItems[2]).toHaveTextContent('Fake Track 2');
+      expect(listItems[3]).toHaveTextContent('Fake Track 3');
+    });
+  });
+
+  describe('when there were already five hidden tracks', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+      <div>
+        <div id="recentlyHiddenTrackList">
+          <li>Fake Track 1</li>
+          <li>Fake Track 2</li>
+          <li>Fake Track 3</li>
+          <li>Fake Track 4</li>
+          <li>Fake Track 5</li>
+        </div>
+      </div>
+    `;
+    });
+
+    it('adds the hidden track at the top and drops the last one', () => {
+      let listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(5);
+
+      addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
+
+      listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(5);
+      expect(listItems[0]).toHaveTextContent('The Artist');
+      expect(listItems[0]).toHaveTextContent('The Track');
+      expect(listItems[1]).toHaveTextContent('Fake Track 1');
+      expect(listItems[2]).toHaveTextContent('Fake Track 2');
+      expect(listItems[3]).toHaveTextContent('Fake Track 3');
+      expect(listItems[4]).toHaveTextContent('Fake Track 4');
     });
   });
 });

@@ -1,5 +1,7 @@
 import { getRecentElementsFromArray } from './data-helpers.js';
 
+export const NUM_RECENT_HIDDEN_TRACKS_DISPLAYED = 5;
+
 class SpinboxStorage {
   settings = {};
   hiddenTracks = {};
@@ -15,7 +17,7 @@ class SpinboxStorage {
     this.recentlyHiddenTracks = getRecentElementsFromArray(
       Object.values(this.hiddenTracks),
       'hiddenAtTs',
-      5
+      NUM_RECENT_HIDDEN_TRACKS_DISPLAYED
     );
   }
 
@@ -36,7 +38,8 @@ class SpinboxStorage {
     await this.#pushHiddenTracks();
 
     this.recentlyHiddenTracks.unshift(trackInfo);
-    if (this.recentlyHiddenTracks.length > 5) this.recentlyHiddenTracks.pop();
+    if (this.recentlyHiddenTracks.length > NUM_RECENT_HIDDEN_TRACKS_DISPLAYED)
+      this.recentlyHiddenTracks.pop();
   }
 
   async unhideTrack(trackHref) {
