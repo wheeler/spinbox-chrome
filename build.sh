@@ -42,3 +42,7 @@ for file in "${files[@]}"; do
 done
 
 echo "Build complete!"
+
+zip -r dist.zip dist
+
+echo "Zip complete!"

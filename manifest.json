@@ -14,10 +14,7 @@
       "js": ["feed-page/content.js"],
       "css": ["feed-page/feed-page.css"],
       "run_at": "document_end",
-      "matches": [
-        "https://soundcloud.com/*",
-        "https://soundcloud.com/NOTE-because-soundcloud-is-a-SPA-we-need-to-match-all-pages-to-allow-for-navigation"
-      ],
+      "matches": ["https://soundcloud.com/*"],
       "world": "ISOLATED"
     }
   ],
