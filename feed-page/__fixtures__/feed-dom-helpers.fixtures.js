@@ -3,7 +3,7 @@
  */
 
 export const trackElementFromFeedPage = `
-<li class="soundList__item spinbox-processed">
+<li class="soundList__item">
   <div class="activity">
     <div
       role="group"
@@ -49,14 +49,6 @@ export const trackElementFromFeedPage = `
             ></span
           >
         </div>
-        <button
-          class="spinbox-hide sc-button sc-button-medium sc-button-secondary"
-          aria-label="Hide Track"
-          title="Hide Track"
-          style="margin-left: auto"
-        >
-          ✕
-        </button>
       </div>
 
       <div class="sound__body">
