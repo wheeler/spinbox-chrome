@@ -1,5 +1,7 @@
 # Spinbox Chrome Extension
 
+[![Spinbox in Chrome Web Store](/.github/images/chrome_webstore_badge.png)](https://chromewebstore.google.com/detail/spinbox/dlkonbbcmbokjmoanilgbhapldalhohk)
+
 Use the SoundCloud feed as a music inbox. Dig for music faster and with less repetition.
 
 ![Screenshot of the SoundCloud feed with the SpinBox Extension active](/.github/images/spinbox_screenshot.png)
