@@ -1,5 +1,9 @@
 import { playNext } from './soundcloud-player';
-import { createHideTrackButton, createSidebarElement } from './new-elements';
+import {
+  createPullTrackButton,
+  createHideTrackButton,
+  createSidebarElement,
+} from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
   addDisableVisualExpandFlagToStreamList,
@@ -17,6 +21,9 @@ console.log('Spinbox - loading');
 const spinboxStorage = new SpinboxStorage();
 
 // TODO: listen for messages
+
+async function pullTrackManually(element) {
+}
 
 async function hideSoundListElement(element) {
   // re-read the info from the element. less data in closure and images may have been lazy-loaded
@@ -63,7 +70,10 @@ function processNewSoundListElements(soundListElements) {
     // (layout is designed to handle multiple buttons in the future)
     const buttons = [];
     if (contextElement) {
-      // TODO: add "dig" button
+      const pullButton = createPullTrackButton(() =>
+        pullTrackManually(element)
+      );
+      buttons.push(pullButton);
 
       const hideButton = createHideTrackButton(() =>
         hideSoundListElement(element)

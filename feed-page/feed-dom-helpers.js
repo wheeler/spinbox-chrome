@@ -5,7 +5,7 @@ import {
 import { NUM_RECENT_HIDDEN_TRACKS_DISPLAYED } from './data-storage.js';
 
 /**
- * add flag to a stream list within the contentElement
+ * add the flag to a stream list within the contentElement
  * @param contentElement
  */
 export function addDisableVisualExpandFlagToStreamList(contentElement) {
