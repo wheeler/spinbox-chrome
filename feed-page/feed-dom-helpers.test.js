@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/dom';
+import { getByRole, screen, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
