@@ -1,8 +1,9 @@
-import { screen, within } from '@testing-library/dom';
+import { getByRole, screen, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
   getSoundListElementInfo,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
@@ -10,8 +11,10 @@ import {
   updateHiddenTrackCount,
 } from './feed-dom-helpers.js';
 import {
+  alreadyAddedPlaylistItemElement,
   currentlyPlayingTrackElementFromFeedPage,
   playlistElementFromFeedPage,
+  playlistItemElement,
   repostedTrackElementFromArtistPage,
   repostedTrackElementFromFeedPage,
   trackElementFromArtistPage,
@@ -418,5 +421,36 @@ describe('updateHiddenTrackCount', () => {
     const e = screen.getByRole('heading');
     expect(e).toBeInTheDocument();
     expect(e).toHaveTextContent('0 hidden tracks');
+  });
+});
+
+describe('clickAddToPlaylist', () => {
+  let onClick;
+
+  const makeElement = (html) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    wrapper.querySelector('button').onclick = onClick;
+    return wrapper.firstElementChild;
+  };
+
+  beforeEach(() => {
+    onClick = jest.fn();
+  });
+
+  it('clicks the submit button within the element', () => {
+    const element = makeElement(playlistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not click the button if the button is marked as selected', () => {
+    const element = makeElement(alreadyAddedPlaylistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
