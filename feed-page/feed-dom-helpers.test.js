@@ -1,17 +1,22 @@
-import { screen, within } from '@testing-library/dom';
+import { getByRole, screen, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
   getSoundListElementInfo,
+  queryPlaylistItem,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
 } from './feed-dom-helpers.js';
 import {
+  alreadyAddedPlaylistItemElement,
   currentlyPlayingTrackElementFromFeedPage,
+  differentPlaylistItemElement,
   playlistElementFromFeedPage,
+  playlistItemElement,
   repostedTrackElementFromArtistPage,
   repostedTrackElementFromFeedPage,
   trackElementFromArtistPage,
@@ -424,5 +429,61 @@ describe('updateHiddenTrackCount', () => {
     const e = screen.getByRole('heading');
     expect(e).toBeInTheDocument();
     expect(e).toHaveTextContent('0 hidden tracks');
+  });
+});
+
+describe('queryPlaylistItem', () => {
+  beforeEach(() => {});
+
+  it('matches when the title matches', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches even when the playlist is already added', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + alreadyAddedPlaylistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches when the title does not match', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Something Fake');
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('clickAddToPlaylist', () => {
+  let onClick;
+
+  const makeElement = (html) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    wrapper.querySelector('button').onclick = onClick;
+    return wrapper.firstElementChild;
+  };
+
+  beforeEach(() => {
+    onClick = jest.fn();
+  });
+
+  it('clicks the submit button within the element', () => {
+    const element = makeElement(playlistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not click the button if the button is marked as selected', () => {
+    const element = makeElement(alreadyAddedPlaylistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
