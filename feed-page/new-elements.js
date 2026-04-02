@@ -40,6 +40,23 @@ export function createSidebarElement() {
 }
 
 /**
+ * Create a pull track button
+ * @param onClick
+ * @returns {HTMLButtonElement}
+ */
+export function createPullTrackButton(onClick) {
+  const button = document.createElement('button');
+  button.className =
+    'spinbox-pull sc-button sc-button-medium sc-button-secondary';
+  button.style.marginLeft = '4px';
+  button.innerText = 'Pull';
+  button.onclick = onClick;
+  button.ariaLabel = 'Pull Track';
+  button.title = 'Pull Track';
+  return button;
+}
+
+/**
  * Create a hide track button
  * @param onClick
  * @returns {HTMLButtonElement}
@@ -51,7 +68,6 @@ export function createHideTrackButton(onClick) {
   hideButton.style.marginLeft = '4px';
   hideButton.innerText = '✕';
   hideButton.onclick = onClick;
-
   hideButton.ariaLabel = 'Hide Track';
   hideButton.title = 'Hide Track';
   return hideButton;

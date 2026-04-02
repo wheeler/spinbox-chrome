@@ -48,9 +48,9 @@ Open source (GPLv3). Source code is hosted on GitHub at https://github.com/wheel
 
 ## Planned Features
 
-- "Dig" button – quickly add tracks to a playlist (and hide and move on to the next one)
+- "Pull" button – quickly add tracks to a playlist (and hide and move on to the next one)
 - Global Show / Hide toggle
-- Hotkey operation for hide and dig
+- Hotkey operation for hide and pull
 - Some visual representation for blocks of hidden tracks
 - Optional feature to auto-hide tracks above a certain length
 - Improve handling of playlists / albums that appear in the feed
@@ -63,8 +63,8 @@ Open source (GPLv3). Source code is hosted on GitHub at https://github.com/wheel
 - Allow configuration more easily either within the sidebar or opening a configuration page instead of the extension
   popup (which is relatively hidden to most users).
 - Prompt the user in the page when configuration is necessary.
-- Multiple dig-playlists (crates)
-- Auto create dig playlist?
+- Multiple pull-playlists (crates)
+- Auto create pull playlist?
 - Auto 100-track limit for playlists?
 - Mute specific artists
 - Playlist management features: move tracks between playlists quickly.
