@@ -114,6 +114,13 @@ export function renderRecentlyHiddenTracksList(
   hiddenList.replaceChildren(...newElements);
 }
 
+export function queryPlaylistItem(title) {
+  const playlistItems = document.querySelectorAll('.addToPlaylistList__item');
+  return Array.from(playlistItems).find((item) =>
+    item.querySelector(`a.addToPlaylistItem__titleLink[title="${title}"]`)
+  );
+}
+
 export function clickAddToPlaylist(playlistItemElement) {
   const button = playlistItemElement.querySelector('button[type="submit"]');
   // `sc-button-selected` is a way to determine the button says "Added" that is not language-dependent

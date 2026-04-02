@@ -5,6 +5,7 @@ import {
   addRecentlyHiddenTrack,
   clickAddToPlaylist,
   getSoundListElementInfo,
+  queryPlaylistItem,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
@@ -13,6 +14,7 @@ import {
 import {
   alreadyAddedPlaylistItemElement,
   currentlyPlayingTrackElementFromFeedPage,
+  differentPlaylistItemElement,
   playlistElementFromFeedPage,
   playlistItemElement,
   repostedTrackElementFromArtistPage,
@@ -427,6 +429,31 @@ describe('updateHiddenTrackCount', () => {
     const e = screen.getByRole('heading');
     expect(e).toBeInTheDocument();
     expect(e).toHaveTextContent('0 hidden tracks');
+  });
+});
+
+describe('queryPlaylistItem', () => {
+  beforeEach(() => {});
+
+  it('matches when the title matches', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches even when the playlist is already added', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + alreadyAddedPlaylistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches when the title does not match', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Something Fake');
+    expect(result).toBeUndefined();
   });
 });
 
