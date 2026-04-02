@@ -3704,6 +3704,71 @@ export const playlistItemElement = `
 </li>
 `;
 
+export const differentPlaylistItemElement = `
+<li class="addToPlaylistList__item sc-border-light-top">
+  <div class="addToPlaylistItem g-flex-row-centered">
+    <a
+      href="/moonwoofer/sets/another-playlist"
+      class="addToPlaylistItem__image"
+      title="Another Playlist"
+    >
+      <div
+        class="image image__lightOutline sc-artwork-6x sc-artwork sc-artwork-placeholder-11 m-loaded"
+      >
+        <span
+          style="
+            background-image: url('http://example.com/foo.png');
+            opacity: 1;
+          "
+          class="sc-artwork sc-artwork-6x sc-artwork-placeholder-11 image__full g-opacity-transition"
+          aria-label="Another Playlist"
+          aria-role="img"
+        ></span>
+      </div>
+    </a>
+
+    <div class="addToPlaylistItem__content">
+      <h4 class="addToPlaylistItem__title sc-truncate">
+        <a
+          href="/moonwoofer/sets/another-playlist"
+          class="addToPlaylistItem__titleLink sc-link-dark sc-link-primary"
+          title="Another Playlist"
+        >
+          Another Playlist
+        </a>
+      </h4>
+      <div class="addToPlaylistItem__data">
+        <span
+          title="62 tracks"
+          class="addToPlaylistItem__count sc-ministats sc-ministats-small sc-ministats-sounds"
+        >
+          62
+        </span>
+      </div>
+    </div>
+
+    <div class="addToPlaylistItem__actions g-flex-row-centered">
+      <span
+        class="sc-label sc-label-small sc-label-private sc-label-icon-only addToPlaylistItem__private"
+      >
+        Private
+      </span>
+
+      <button
+        type="submit"
+        class="addToPlaylistButton sc-button-secondary sc-button sc-button-medium sc-button-responsive"
+        tabindex="0"
+        aria-describedby="tooltip-6588"
+        title=""
+        aria-label=""
+      >
+        <span class="sc-button-label">Add to Playlist</span>
+      </button>
+    </div>
+  </div>
+</li>
+`;
+
 export const alreadyAddedPlaylistItemElement = `
 <li class="addToPlaylistList__item sc-border-light-top">
   <div class="addToPlaylistItem g-flex-row-centered">
