@@ -8,6 +8,7 @@ import { forceLoadingMoreTracks } from './page-utilities';
 import {
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
   getSoundListElementInfo,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
@@ -23,6 +24,11 @@ const spinboxStorage = new SpinboxStorage();
 // TODO: listen for messages
 
 async function pullTrackManually(element) {
+  const playlistItem = null;
+
+  if (playlistItem) {
+    clickAddToPlaylist(playlistItem);
+  }
 }
 
 async function hideSoundListElement(element) {

@@ -113,3 +113,11 @@ export function renderRecentlyHiddenTracksList(
   }
   hiddenList.replaceChildren(...newElements);
 }
+
+export function clickAddToPlaylist(playlistItemElement) {
+  const button = playlistItemElement.querySelector('button[type="submit"]');
+  // `sc-button-selected` is a way to determine the button says "Added" that is not language-dependent
+  if (button && !button.classList.contains('sc-button-selected')) {
+    button.click();
+  }
+}
