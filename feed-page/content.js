@@ -76,10 +76,14 @@ function processNewSoundListElements(soundListElements) {
     // (layout is designed to handle multiple buttons in the future)
     const buttons = [];
     if (contextElement) {
-      const pullButton = createPullTrackButton(() =>
-        pullTrackManually(element)
-      );
-      buttons.push(pullButton);
+      // don't show pull for playlists - they can't be pulled as a whole
+      const isPlaylist = !!element.querySelector('.sound.playlist');
+      if (!isPlaylist) {
+        const pullButton = createPullTrackButton(() =>
+          pullTrackManually(element)
+        );
+        buttons.push(pullButton);
+      }
 
       const hideButton = createHideTrackButton(() =>
         hideSoundListElement(element)
