@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.0] - 2026-04-06
+
+### Added
+
+- Small logo and title in sidebar #7
+
+### Changed
+
+- Reduced the number of "recently hidden" tracks shown in sidebar from 5 to 3 #7
+- Hidden tracks that are being currently played are now temporarily displayed but faded out #8
+
 ## [0.0.1] - 2026-03-21
 
 Initial release version
