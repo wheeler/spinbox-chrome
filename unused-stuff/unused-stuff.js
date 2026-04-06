@@ -98,17 +98,6 @@ document.getElementById('updateAuth').onclick = () => {
   });
 };
 
-const digSettingsPromise = chrome.storage.local.get('digSettings');
-const digSettings = (await digSettingsPromise).digSettings || {};
-document.getElementById('digPlaylist').value = digSettings.playlistId || '';
-document.getElementById('updateDigSettings').onclick = () => {
-  chrome.storage.local.set({
-    digSettings: {
-      playlistId: document.getElementById('digPlaylist').value,
-    },
-  });
-};
-
 // popup credentials element actions
 // SC credentials settings information
 document.getElementById('showCredentialsHelp').addEventListener('click', () => {

@@ -15,13 +15,43 @@ async function loadData() {
     disableToggle.checked = !overrideSetting;
     disableToggle.addEventListener('change', async () => {
       const val = disableToggle.checked;
-      document.getElementById('pageRefreshWarning').style.display = 'block';
+      // TODO: notify tabs instead of showing a warning
+      document.getElementById('visualExpandPageRefreshWarning').style.display =
+        'block';
       await chrome.storage.local.set({
-        settings: { overrideDisableVisualExpand: !val },
+        settings: {
+          ...settings,
+          overrideDisableVisualExpand: !val,
+        },
       });
-      // TODO: notify tabs
     });
   }
+
+  const updateSettingsButton = document.getElementById('updateSettings');
+  const pullPlaylistInput = document.getElementById('pullPlaylist');
+  pullPlaylistInput.value = settings.pullPlaylist || '';
+  pullPlaylistInput.oninput = (event) => {
+    const newValue = event.target.value.trim();
+    console.log(
+      'pullPlaylistInput.oninput',
+      newValue,
+      newValue === '',
+      newValue === pullPlaylistInput.value
+    );
+    updateSettingsButton.disabled =
+      newValue === '' || newValue === settings.pullPlaylist;
+  };
+
+  updateSettingsButton.onclick = async (event) => {
+    event.target.disabled = true;
+    // TODO: notify tabs instead of showing a warning
+    document.getElementById('settingsPageRefreshWarning').style.display =
+      'block';
+    settings.pullPlaylist = pullPlaylistInput.value.trim();
+    await chrome.storage.local.set({
+      settings: settings,
+    });
+  };
 
   const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
