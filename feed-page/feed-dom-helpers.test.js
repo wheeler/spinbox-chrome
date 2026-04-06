@@ -193,14 +193,13 @@ describe('addRecentlyHiddenTrack', () => {
     });
   });
 
-  describe('when there were already hidden tracks', () => {
+  describe('when there were already two hidden tracks', () => {
     beforeEach(() => {
       document.body.innerHTML = `
       <div>
         <div id="recentlyHiddenTrackList">
           <li>Fake Track 1</li>
           <li>Fake Track 2</li>
-          <li>Fake Track 3</li>
         </div>
       </div>
     `;
@@ -208,21 +207,20 @@ describe('addRecentlyHiddenTrack', () => {
 
     it('adds the hidden track at the top', () => {
       let listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(3);
+      expect(listItems).toHaveLength(2);
 
       addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
 
       listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(4);
+      expect(listItems).toHaveLength(3);
       expect(listItems[0]).toHaveTextContent('The Artist');
       expect(listItems[0]).toHaveTextContent('The Track');
       expect(listItems[1]).toHaveTextContent('Fake Track 1');
       expect(listItems[2]).toHaveTextContent('Fake Track 2');
-      expect(listItems[3]).toHaveTextContent('Fake Track 3');
     });
   });
 
-  describe('when there were already five hidden tracks', () => {
+  describe('when there were already three hidden tracks', () => {
     beforeEach(() => {
       document.body.innerHTML = `
       <div>
@@ -230,8 +228,6 @@ describe('addRecentlyHiddenTrack', () => {
           <li>Fake Track 1</li>
           <li>Fake Track 2</li>
           <li>Fake Track 3</li>
-          <li>Fake Track 4</li>
-          <li>Fake Track 5</li>
         </div>
       </div>
     `;
@@ -239,18 +235,16 @@ describe('addRecentlyHiddenTrack', () => {
 
     it('adds the hidden track at the top and drops the last one', () => {
       let listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(5);
+      expect(listItems).toHaveLength(3);
 
       addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
 
       listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(5);
+      expect(listItems).toHaveLength(3);
       expect(listItems[0]).toHaveTextContent('The Artist');
       expect(listItems[0]).toHaveTextContent('The Track');
       expect(listItems[1]).toHaveTextContent('Fake Track 1');
       expect(listItems[2]).toHaveTextContent('Fake Track 2');
-      expect(listItems[3]).toHaveTextContent('Fake Track 3');
-      expect(listItems[4]).toHaveTextContent('Fake Track 4');
     });
   });
 });
