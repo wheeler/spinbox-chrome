@@ -80,8 +80,8 @@
   text-overflow: ellipsis;
   width: 265px;
 }
-.spinbox-hidden-track-description-artist {
-  color: #666;
+.spinbox-text-dim {
+  color: #757575;
 }
 .spinbox-hidden-track-description-artist svg {
   display: inline;

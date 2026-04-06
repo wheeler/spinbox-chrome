@@ -10,32 +10,51 @@ export function createSidebarElement() {
   const spinboxSidebar = document.createElement('article');
   spinboxSidebar.className = 'sidebarModule spinbox-sidebar';
 
-  const title = document.createElement('h4');
-  title.className = 'sidebarHeader__title__webi__style';
-  title.style.padding = '8px 16px';
-  const hiddenTrackCount = document.createElement('span');
-  hiddenTrackCount.id = 'hiddenTracksCount';
-  const hiddenTracksPlural = document.createElement('span');
-  hiddenTracksPlural.id = 'hiddenTracksPlural';
-  hiddenTracksPlural.textContent = 's';
-  title.append(hiddenTrackCount, ' hidden track', hiddenTracksPlural);
+  const spinboxTitle = document.createElement('h4');
+  spinboxTitle.className = 'sidebarHeader__title__webi__style';
+  spinboxTitle.style.padding = '8px 16px';
+  const spinboxIcon = document.createElement('img');
+  spinboxIcon.src = chrome.runtime.getURL('images/icon-16.png');
+  spinboxIcon.style.display = 'inline-block';
+  spinboxIcon.style.marginRight = '6px';
+  spinboxIcon.style.verticalAlign = 'bottom';
+  spinboxTitle.append(spinboxIcon, 'Spinbox');
 
   const content = document.createElement('div');
   content.className = 'sidebarContent';
 
-  const recentlyHidden = document.createElement('div');
-  recentlyHidden.id = 'recentlyHiddenTracksContainer';
-  recentlyHidden.style.padding = '8px 16px';
-  const recentlyHiddenTitle = document.createElement('div');
-  recentlyHiddenTitle.innerText = 'Recently hidden';
-  recentlyHiddenTitle.className =
-    'sc-text-secondary sidebarHeader__title__webi__style sc-mb-1x';
+  const recentlyHiddenContainer = document.createElement('div');
+  recentlyHiddenContainer.id = 'recentlyHiddenTracksContainer';
+  recentlyHiddenContainer.style.padding = '8px 16px';
+
+  const recentlyHiddenHeading = document.createElement('div');
+  recentlyHiddenHeading.className = 'sc-text-secondary sc-mb-0.5x';
+  recentlyHiddenHeading.style.display = 'flex';
+
+  const recentlyHiddenTitleText = document.createElement('span');
+  recentlyHiddenTitleText.innerText = 'Recently hidden';
+  recentlyHiddenTitleText.className = 'sidebarHeader__title__webi__style ';
+  recentlyHiddenTitleText.style.flexGrow = '1';
+
+  const recentlyHiddenCountSection = document.createElement('span');
+  recentlyHiddenCountSection.className = 'spinbox-text-dim';
+  recentlyHiddenCountSection.style.fontSize = '12px';
+
+  const hiddenTrackCount = document.createElement('span');
+  hiddenTrackCount.id = 'hiddenTracksCount';
+
+  recentlyHiddenCountSection.append(hiddenTrackCount, ' total');
+  recentlyHiddenHeading.append(
+    recentlyHiddenTitleText,
+    recentlyHiddenCountSection
+  );
+
   const recentlyHiddenList = document.createElement('div');
   recentlyHiddenList.id = 'recentlyHiddenTrackList';
-  recentlyHidden.append(recentlyHiddenTitle, recentlyHiddenList);
 
-  content.append(recentlyHidden);
-  spinboxSidebar.append(title, content);
+  recentlyHiddenContainer.append(recentlyHiddenHeading, recentlyHiddenList);
+  content.append(recentlyHiddenContainer);
+  spinboxSidebar.append(spinboxTitle, content);
   return spinboxSidebar;
 }
 
@@ -99,7 +118,8 @@ export function createRecentlyHiddenTrackElement(track, undoHideTrackFn) {
 
   const hiddenTrackDescriptionArtist = document.createElement('div');
   hiddenTrackDescriptionArtist.className =
-    'spinbox-hidden-track-description-artist';
+    'spinbox-hidden-track-description-artist spinbox-text-dim';
+
   if (track.reposterName) {
     hiddenTrackDescriptionArtist.append(track.reposterName);
     hiddenTrackDescriptionArtist.append(createRepostSvg());
