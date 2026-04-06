@@ -32,12 +32,6 @@ async function loadData() {
   pullPlaylistInput.value = settings.pullPlaylist || '';
   pullPlaylistInput.oninput = (event) => {
     const newValue = event.target.value.trim();
-    console.log(
-      'pullPlaylistInput.oninput',
-      newValue,
-      newValue === '',
-      newValue === pullPlaylistInput.value
-    );
     updateSettingsButton.disabled =
       newValue === '' || newValue === settings.pullPlaylist;
   };
