@@ -42,9 +42,10 @@ Open source (GPLv3). Source code is hosted on GitHub at https://github.com/wheel
 ### Known quirks / issues:
 
 - Playlists and albums on the feed are handled as one whole unit to hide instead of individual tracks.
-- Hidden tracks can still be played in the SoundCloud UI. Example: if you hide a playing track and the next track is
-  already hidden, that hidden track will play, which is a bit of a confusing experience. The player in the footer behaves
-  normally and shows the playing track even if it is hidden. The user can simply click another track to play it.
+- Hidden tracks can still be played in the SoundCloud UI. For example, if a track somewhere in the middle of the feed is
+  hidden, and you play the previous track, then skip forward, the hidden track will play. This is a bit confusing, so
+  for now the hidden track will be visible but faded out when it is actively playing. The player in the footer behaves
+  normally and shows the playing track. The user can simply click another track to play it.
 
 ## Planned Features
 
