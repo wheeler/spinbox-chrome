@@ -52,6 +52,10 @@
   color: var(--font-special-color);
 }
 
+#spinboxSidebarErrorMessage:empty {
+  display: none;
+}
+
 .spinbox-recently-hidden-track {
   list-style: none;
   display: flex;

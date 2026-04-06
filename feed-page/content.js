@@ -6,14 +6,18 @@ import {
 } from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
+  addCouldNotFindPlaylistMessage,
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
   clickAddToPlaylist,
+  closeModal,
   getSoundListElementInfo,
+  openAddToPlaylistModal,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
+  waitForPlaylistItem,
 } from './feed-dom-helpers';
 import SpinboxStorage from './data-storage';
 
@@ -24,10 +28,28 @@ const spinboxStorage = new SpinboxStorage();
 // TODO: listen for messages
 
 async function pullTrackManually(element) {
-  const playlistItem = null;
+  const pullTitle = spinboxStorage.settings.pullPlaylist;
+  if (!pullTitle) {
+    console.error('Spinbox - no pull playlist set');
+    element.querySelector('button.spinbox-pull').style.color =
+      'var(--font-error-color)';
+    document.getElementById('spinboxSidebarErrorMessage').textContent =
+      'No Pull Playlist Set. Please open the extension settings popup to set a target playlist.';
+    return;
+  }
+
+  openAddToPlaylistModal(element);
+
+  // TODO: if no pull playlist setting - inject with buttons to set
+
+  const playlistItem = await waitForPlaylistItem(pullTitle);
 
   if (playlistItem) {
     clickAddToPlaylist(playlistItem);
+    closeModal();
+    await hideSoundListElement(element);
+  } else {
+    addCouldNotFindPlaylistMessage(pullTitle);
   }
 }
 

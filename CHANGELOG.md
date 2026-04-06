@@ -4,6 +4,8 @@
 
 ### Added
 
+- Pull Button: quickly add a track to a designated "pull" playlist #6
+  - Pull playlist settings in the extension popup
 - Small logo and title in sidebar #7
 
 ### Changed

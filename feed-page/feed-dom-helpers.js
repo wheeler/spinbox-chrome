@@ -1,4 +1,5 @@
 import {
+  createCouldNotFindPlaylistMessage,
   createNoHiddenTracksMessage,
   createRecentlyHiddenTrackElement,
 } from './new-elements.js';
@@ -114,6 +115,49 @@ export function renderRecentlyHiddenTracksList(
   hiddenList.replaceChildren(...newElements);
 }
 
+export function openAddToPlaylistModal(trackElement) {
+  trackElement.querySelector('.sc-button-more').click();
+  document.querySelector('.moreActions .sc-button-addtoset').click();
+}
+
+/**
+ * Wait for a playlist item with the given title to appear in the DOM.
+ * Checks on every page mutation.
+ * Returns the element. If it doesn't appear within the timeout, return null.
+ * @param title
+ * @param timeout
+ * @returns {Promise}
+ */
+export function waitForPlaylistItem(title, timeout = 3000) {
+  const item = queryPlaylistItem(title);
+  if (item) return Promise.resolve({ item });
+
+  return new Promise((resolve) => {
+    let timer;
+    const observer = new MutationObserver(() => {
+      // note - we ignore the mutations parameter because we're using the mutation observer as "anything changed on the page"
+      const item = queryPlaylistItem(title);
+      if (item) {
+        clearTimeout(timer);
+        observer.disconnect();
+        resolve(item);
+      }
+    });
+
+    // observe all document mutations
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // if not found within timeout, disconnect observer and resolve with null
+    timer = setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, timeout);
+  });
+}
+
 export function queryPlaylistItem(title) {
   const playlistItems = document.querySelectorAll('.addToPlaylistList__item');
   return Array.from(playlistItems).find((item) =>
@@ -127,4 +171,14 @@ export function clickAddToPlaylist(playlistItemElement) {
   if (button && !button.classList.contains('sc-button-selected')) {
     button.click();
   }
+}
+
+export function addCouldNotFindPlaylistMessage(playlistName) {
+  document
+    .querySelector('.addToPlaylistList__list')
+    .prepend(createCouldNotFindPlaylistMessage(playlistName));
+}
+
+export function closeModal() {
+  document.querySelector('button.modal__closeButton')?.click();
 }
