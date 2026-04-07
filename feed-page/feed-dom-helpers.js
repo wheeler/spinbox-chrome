@@ -159,18 +159,17 @@ export function waitForPlaylistItem(title, timeout = 3000) {
 }
 
 export function queryPlaylistItem(title) {
-  const playlistItems = document.querySelectorAll('.addToPlaylistList__item');
-  return Array.from(playlistItems).find((item) =>
-    item.querySelector(`a.addToPlaylistItem__titleLink[title="${title}"]`)
+  return document.querySelector(
+    `.addToPlaylistList__item:has(a.addToPlaylistItem__titleLink[title="${title}"])`
   );
 }
 
 export function clickAddToPlaylist(playlistItemElement) {
-  const button = playlistItemElement.querySelector('button[type="submit"]');
   // `sc-button-selected` is a way to determine the button says "Added" that is not language-dependent
-  if (button && !button.classList.contains('sc-button-selected')) {
-    button.click();
-  }
+  const button = playlistItemElement.querySelector(
+    'button[type="submit"]:not(.sc-button-selected)'
+  );
+  button?.click();
 }
 
 export function addCouldNotFindPlaylistMessage(playlistName) {

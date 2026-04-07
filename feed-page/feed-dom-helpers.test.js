@@ -427,8 +427,6 @@ describe('updateHiddenTrackCount', () => {
 });
 
 describe('queryPlaylistItem', () => {
-  beforeEach(() => {});
-
   it('matches when the title matches', () => {
     document.body.innerHTML =
       differentPlaylistItemElement + playlistItemElement;
@@ -447,7 +445,7 @@ describe('queryPlaylistItem', () => {
     document.body.innerHTML =
       differentPlaylistItemElement + playlistItemElement;
     const result = queryPlaylistItem('Something Fake');
-    expect(result).toBeUndefined();
+    expect(result).toBeFalsy();
   });
 });
 
