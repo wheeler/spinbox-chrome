@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Spinbox",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Feed tools for SoundCloud that help you sort through new music more efficiently.",
   "icons": {
     "16": "images/icon-16.png",

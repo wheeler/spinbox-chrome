@@ -1,14 +1,23 @@
 import { playNext } from './soundcloud-player';
-import { createHideTrackButton, createSidebarElement } from './new-elements';
+import {
+  createPullTrackButton,
+  createHideTrackButton,
+  createSidebarElement,
+} from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
+  addCouldNotFindPlaylistMessage,
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
+  closeModal,
   getSoundListElementInfo,
+  openAddToPlaylistModal,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
+  waitForPlaylistItem,
 } from './feed-dom-helpers';
 import SpinboxStorage from './data-storage';
 
@@ -17,6 +26,32 @@ console.log('Spinbox - loading');
 const spinboxStorage = new SpinboxStorage();
 
 // TODO: listen for messages
+
+async function pullTrackManually(element) {
+  const pullTitle = spinboxStorage.settings.pullPlaylist;
+  if (!pullTitle) {
+    console.error('Spinbox - no pull playlist set');
+    element.querySelector('button.spinbox-pull').style.color =
+      'var(--font-error-color)';
+    document.getElementById('spinboxSidebarErrorMessage').textContent =
+      'No Pull Playlist Set. Please open the extension settings popup to set a target playlist.';
+    return;
+  }
+
+  openAddToPlaylistModal(element);
+
+  // TODO: if no pull playlist setting - inject with buttons to set
+
+  const playlistItem = await waitForPlaylistItem(pullTitle);
+
+  if (playlistItem) {
+    clickAddToPlaylist(playlistItem);
+    closeModal();
+    await hideSoundListElement(element);
+  } else {
+    addCouldNotFindPlaylistMessage(pullTitle);
+  }
+}
 
 async function hideSoundListElement(element) {
   // re-read the info from the element. less data in closure and images may have been lazy-loaded
@@ -63,7 +98,14 @@ function processNewSoundListElements(soundListElements) {
     // (layout is designed to handle multiple buttons in the future)
     const buttons = [];
     if (contextElement) {
-      // TODO: add "dig" button
+      // don't show pull for playlists - they can't be pulled as a whole
+      const isPlaylist = !!element.querySelector('.sound.playlist');
+      if (!isPlaylist) {
+        const pullButton = createPullTrackButton(() =>
+          pullTrackManually(element)
+        );
+        buttons.push(pullButton);
+      }
 
       const hideButton = createHideTrackButton(() =>
         hideSoundListElement(element)

@@ -11,8 +11,7 @@ export function createSidebarElement() {
   spinboxSidebar.className = 'sidebarModule spinbox-sidebar';
 
   const spinboxTitle = document.createElement('h4');
-  spinboxTitle.className = 'sidebarHeader__title__webi__style';
-  spinboxTitle.style.padding = '8px 16px';
+  spinboxTitle.className = 'sidebarHeader sidebarHeader__title__webi__style';
   const spinboxIcon = document.createElement('img');
   spinboxIcon.src = chrome.runtime.getURL('images/icon-16.png');
   spinboxIcon.style.display = 'inline-block';
@@ -23,9 +22,13 @@ export function createSidebarElement() {
   const content = document.createElement('div');
   content.className = 'sidebarContent';
 
+  const errorMessage = document.createElement('div');
+  errorMessage.id = 'spinboxSidebarErrorMessage';
+  errorMessage.className = 'sc-text-error sc-py-1x sc-px-2x';
+
   const recentlyHiddenContainer = document.createElement('div');
   recentlyHiddenContainer.id = 'recentlyHiddenTracksContainer';
-  recentlyHiddenContainer.style.padding = '8px 16px';
+  recentlyHiddenContainer.className = 'sc-py-1x sc-px-2x';
 
   const recentlyHiddenHeading = document.createElement('div');
   recentlyHiddenHeading.className = 'sc-text-secondary sc-mb-0.5x';
@@ -53,9 +56,26 @@ export function createSidebarElement() {
   recentlyHiddenList.id = 'recentlyHiddenTrackList';
 
   recentlyHiddenContainer.append(recentlyHiddenHeading, recentlyHiddenList);
-  content.append(recentlyHiddenContainer);
+  content.append(errorMessage, recentlyHiddenContainer);
   spinboxSidebar.append(spinboxTitle, content);
   return spinboxSidebar;
+}
+
+/**
+ * Create a pull track button
+ * @param onClick
+ * @returns {HTMLButtonElement}
+ */
+export function createPullTrackButton(onClick) {
+  const button = document.createElement('button');
+  button.className =
+    'spinbox-pull sc-button sc-button-medium sc-button-secondary';
+  button.style.marginLeft = '4px';
+  button.innerText = 'Pull';
+  button.onclick = onClick;
+  button.ariaLabel = 'Pull Track';
+  button.title = 'Pull Track';
+  return button;
 }
 
 /**
@@ -70,7 +90,6 @@ export function createHideTrackButton(onClick) {
   hideButton.style.marginLeft = '4px';
   hideButton.innerText = '✕';
   hideButton.onclick = onClick;
-
   hideButton.ariaLabel = 'Hide Track';
   hideButton.title = 'Hide Track';
   return hideButton;
@@ -146,4 +165,11 @@ function createRepostSvg() {
   const template = document.createElement('template');
   template.innerHTML = repostSVG;
   return template.content.firstElementChild;
+}
+
+export function createCouldNotFindPlaylistMessage(playlistName) {
+  const message = document.createElement('div');
+  message.className = 'sc-text-special sc-m-2x';
+  message.textContent = `Spinbox: Could not find playlist ${playlistName}`;
+  return message;
 }
