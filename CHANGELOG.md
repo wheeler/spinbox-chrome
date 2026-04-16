@@ -13,6 +13,10 @@
 - Reduced the number of "recently hidden" tracks shown in sidebar from 5 to 3 #7
 - Hidden tracks that are being currently played are now temporarily displayed but faded out #8
 
+### Fixed
+
+- Fixed a bug where occasionally the extension would fail to initialize if the extension initialized later than expected
+
 ## [0.0.1] - 2026-03-21
 
 Initial release version

@@ -157,6 +157,27 @@ function setupSpinboxSidebarElement(contentElement) {
   renderRecentlyHiddenTracksListWithContext();
 }
 
+function modifyFeedContent(contentElement) {
+  // Add the disable-visual-expand class based on the setting
+  if (!spinboxStorage.settings.overrideDisableVisualExpand) {
+    addDisableVisualExpandFlagToStreamList(contentElement);
+  }
+
+  // Create and fill in the sidebar element
+  setupSpinboxSidebarElement(contentElement);
+
+  // check for already loaded but unprocessed nodes
+  // seems to happen on SPA navigation returning to the feed from another page
+  const existingSoundListItems = contentElement.querySelectorAll(
+    'li.soundList__item:not(.spinbox-processed)'
+  );
+  processNewSoundListElements(existingSoundListItems);
+
+  // set up the list observer
+  const lazyList = contentElement.querySelector('.lazyLoadingList');
+  setupSoundListMutationObserver(lazyList);
+}
+
 /**
  * This mutation observer handles changes to id='content' (while on the feed page)
  * -- apply the 'spinbox-disable-visual-expand' class
@@ -165,8 +186,8 @@ function setupSpinboxSidebarElement(contentElement) {
  */
 function setupContentMutationObserver() {
   console.log('Spinbox - setting up content observer');
-  const contentNode = document.getElementById('content');
-  if (!contentNode) {
+  const content = document.getElementById('content');
+  if (!content) {
     console.warn(
       'Spinbox - tried to set up content observer when #content did not exist.'
     );
@@ -186,31 +207,22 @@ function setupContentMutationObserver() {
             'Spinbox - expected content to be replaced with a single node but was multiple.'
           );
         }
-
-        // Add the disable-visual-expand class based on the setting
-        if (!spinboxStorage.settings.overrideDisableVisualExpand) {
-          addDisableVisualExpandFlagToStreamList(newContent);
-        }
-
-        // Create and fill in the sidebar element
-        setupSpinboxSidebarElement(newContent);
-
-        // check for already loaded but unprocessed nodes
-        // seems to happen on SPA navigation returning to the feed from another page
-        const existingSoundListItems = mutation.target.querySelectorAll(
-          'li.soundList__item:not(.spinbox-processed)'
-        );
-        processNewSoundListElements(existingSoundListItems);
-
-        // set up the list observer
-        const lazyList = newContent.querySelector('.lazyLoadingList');
-        setupSoundListMutationObserver(lazyList);
+        modifyFeedContent(newContent);
       }
     });
   };
 
+  // if the content element has already loaded the feed content, modify it now.
+  // we still need the mutation observer to handle SPA navigation.
+  if (
+    content.querySelector('div.stream__list') &&
+    content.querySelector('div.streamSidebar')
+  ) {
+    modifyFeedContent(content);
+  }
+
   const contentObserver = new MutationObserver(onContentMutation);
-  contentObserver.observe(contentNode, { childList: true, subtree: false });
+  contentObserver.observe(content, { childList: true, subtree: false });
 }
 
 /**
