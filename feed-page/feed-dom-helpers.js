@@ -130,7 +130,7 @@ export function openAddToPlaylistModal(trackElement) {
  */
 export function waitForPlaylistItem(title, timeout = 3000) {
   const item = queryPlaylistItem(title);
-  if (item) return Promise.resolve({ item });
+  if (item) return Promise.resolve(item);
 
   return new Promise((resolve) => {
     let timer;
