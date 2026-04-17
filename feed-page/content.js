@@ -56,6 +56,8 @@ async function pullTrackManually(element) {
 async function hideSoundListElement(element) {
   // re-read the info from the element. less data in closure and images may have been lazy-loaded
   const info = getSoundListElementInfo(element);
+  if (spinboxStorage.trackIsHidden(info.trackHref)) return;
+
   await spinboxStorage.hideTrack(info);
   // hide element
   element.classList.add('spinbox-hidden');
