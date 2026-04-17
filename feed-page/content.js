@@ -1,4 +1,4 @@
-import { playNext } from './soundcloud-player';
+import { playNext, isPlaying } from './soundcloud-player';
 import {
   createPullTrackButton,
   createHideTrackButton,
@@ -11,6 +11,7 @@ import {
   addRecentlyHiddenTrack,
   clickAddToPlaylist,
   closeModal,
+  findPlayingElement,
   getSoundListElementInfo,
   openAddToPlaylistModal,
   renderRecentlyHiddenTracksList,
@@ -264,6 +265,27 @@ function setupSoundListMutationObserver(targetNode) {
   observer.observe(targetNode, { childList: true, subtree: true });
 }
 
+function setupKeyboardShortcuts() {
+  document.addEventListener('keyup', (event) => {
+    if (event.key === 'x') {
+      if (isPlaying()) {
+        console.log('spinbox: this will hide the current track');
+        const track = findPlayingElement();
+        if (track) {
+          // for some reason the first time this is used on a page it works poorly - track appears hidden for a while before dissapearing?
+          hideSoundListElement(track);
+        } else {
+          console.log(
+            'spinbox: hide called while playing but could not determine playing track'
+          );
+        }
+      } else {
+        console.log('spinbox: hide called while not playing');
+      }
+    }
+  });
+}
+
 /** --------------------
  *    INITIALIZATION
  *----------------------- */
@@ -271,6 +293,7 @@ function setupSoundListMutationObserver(targetNode) {
 const init = async () => {
   await spinboxStorage.initialLoad();
   setupContentMutationObserver();
+  setupKeyboardShortcuts();
 };
 
 init();

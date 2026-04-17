@@ -39,20 +39,6 @@ const userTimer = setInterval(() => {
 
 // TODO: complete these keybindings
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'x') {
-    if (spinbox.scPlayer.isPlaying()) {
-      console.log('spinbox: this will hide the current track');
-      // identify playing track
-      // move to next track
-      // spinbox.scPlayer.playNext();
-      // hide playing track
-    } else {
-      console.log('spinbox: hide called while not playing');
-    }
-  }
-});
-
-document.addEventListener('keydown', (event) => {
   if (event.key === 'd') {
     if (spinbox.scPlayer.isPlaying()) {
       console.log('spinbox: this will dig the current track');
