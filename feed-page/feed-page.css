@@ -40,6 +40,22 @@
   display: none;
 }
 
+/* display hidden tracks if they are actively being played */
+.soundList__item.spinbox-hidden:has(.sound.playing) {
+  opacity: 0.5;
+  display: block;
+}
+.soundList__item.spinbox-hidden:has(.sound.playing)::before {
+  content: 'This track is hidden by Spinbox';
+  display: block;
+  padding: 0 16px;
+  color: var(--font-special-color);
+}
+
+#spinboxSidebarErrorMessage:empty {
+  display: none;
+}
+
 .spinbox-recently-hidden-track {
   list-style: none;
   display: flex;
@@ -80,8 +96,8 @@
   text-overflow: ellipsis;
   width: 265px;
 }
-.spinbox-hidden-track-description-artist {
-  color: #666;
+.spinbox-text-dim {
+  color: #757575;
 }
 .spinbox-hidden-track-description-artist svg {
   display: inline;

@@ -1,14 +1,23 @@
 import { playNext } from './soundcloud-player';
-import { createHideTrackButton, createSidebarElement } from './new-elements';
+import {
+  createPullTrackButton,
+  createHideTrackButton,
+  createSidebarElement,
+} from './new-elements';
 import { forceLoadingMoreTracks } from './page-utilities';
 import {
+  addCouldNotFindPlaylistMessage,
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
+  closeModal,
   getSoundListElementInfo,
+  openAddToPlaylistModal,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
+  waitForPlaylistItem,
 } from './feed-dom-helpers';
 import SpinboxStorage from './data-storage';
 
@@ -18,9 +27,37 @@ const spinboxStorage = new SpinboxStorage();
 
 // TODO: listen for messages
 
+async function pullTrackManually(element) {
+  const pullTitle = spinboxStorage.settings.pullPlaylist;
+  if (!pullTitle) {
+    console.error('Spinbox - no pull playlist set');
+    element.querySelector('button.spinbox-pull').style.color =
+      'var(--font-error-color)';
+    document.getElementById('spinboxSidebarErrorMessage').textContent =
+      'No Pull Playlist Set. Please open the extension settings popup to set a target playlist.';
+    return;
+  }
+
+  openAddToPlaylistModal(element);
+
+  // TODO: if no pull playlist setting - inject with buttons to set
+
+  const playlistItem = await waitForPlaylistItem(pullTitle);
+
+  if (playlistItem) {
+    clickAddToPlaylist(playlistItem);
+    closeModal();
+    await hideSoundListElement(element);
+  } else {
+    addCouldNotFindPlaylistMessage(pullTitle);
+  }
+}
+
 async function hideSoundListElement(element) {
   // re-read the info from the element. less data in closure and images may have been lazy-loaded
   const info = getSoundListElementInfo(element);
+  if (spinboxStorage.trackIsHidden(info.trackHref)) return;
+
   await spinboxStorage.hideTrack(info);
   // hide element
   element.classList.add('spinbox-hidden');
@@ -63,7 +100,14 @@ function processNewSoundListElements(soundListElements) {
     // (layout is designed to handle multiple buttons in the future)
     const buttons = [];
     if (contextElement) {
-      // TODO: add "dig" button
+      // don't show pull for playlists - they can't be pulled as a whole
+      const isPlaylist = !!element.querySelector('.sound.playlist');
+      if (!isPlaylist) {
+        const pullButton = createPullTrackButton(() =>
+          pullTrackManually(element)
+        );
+        buttons.push(pullButton);
+      }
 
       const hideButton = createHideTrackButton(() =>
         hideSoundListElement(element)
@@ -115,6 +159,27 @@ function setupSpinboxSidebarElement(contentElement) {
   renderRecentlyHiddenTracksListWithContext();
 }
 
+function modifyFeedContent(contentElement) {
+  // Add the disable-visual-expand class based on the setting
+  if (!spinboxStorage.settings.overrideDisableVisualExpand) {
+    addDisableVisualExpandFlagToStreamList(contentElement);
+  }
+
+  // Create and fill in the sidebar element
+  setupSpinboxSidebarElement(contentElement);
+
+  // check for already loaded but unprocessed nodes
+  // seems to happen on SPA navigation returning to the feed from another page
+  const existingSoundListItems = contentElement.querySelectorAll(
+    'li.soundList__item:not(.spinbox-processed)'
+  );
+  processNewSoundListElements(existingSoundListItems);
+
+  // set up the list observer
+  const lazyList = contentElement.querySelector('.lazyLoadingList');
+  setupSoundListMutationObserver(lazyList);
+}
+
 /**
  * This mutation observer handles changes to id='content' (while on the feed page)
  * -- apply the 'spinbox-disable-visual-expand' class
@@ -123,8 +188,8 @@ function setupSpinboxSidebarElement(contentElement) {
  */
 function setupContentMutationObserver() {
   console.log('Spinbox - setting up content observer');
-  const contentNode = document.getElementById('content');
-  if (!contentNode) {
+  const content = document.getElementById('content');
+  if (!content) {
     console.warn(
       'Spinbox - tried to set up content observer when #content did not exist.'
     );
@@ -144,31 +209,22 @@ function setupContentMutationObserver() {
             'Spinbox - expected content to be replaced with a single node but was multiple.'
           );
         }
-
-        // Add the disable-visual-expand class based on the setting
-        if (!spinboxStorage.settings.overrideDisableVisualExpand) {
-          addDisableVisualExpandFlagToStreamList(newContent);
-        }
-
-        // Create and fill in the sidebar element
-        setupSpinboxSidebarElement(newContent);
-
-        // check for already loaded but unprocessed nodes
-        // seems to happen on SPA navigation returning to the feed from another page
-        const existingSoundListItems = mutation.target.querySelectorAll(
-          'li.soundList__item:not(.spinbox-processed)'
-        );
-        processNewSoundListElements(existingSoundListItems);
-
-        // set up the list observer
-        const lazyList = newContent.querySelector('.lazyLoadingList');
-        setupSoundListMutationObserver(lazyList);
+        modifyFeedContent(newContent);
       }
     });
   };
 
+  // if the content element has already loaded the feed content, modify it now.
+  // we still need the mutation observer to handle SPA navigation.
+  if (
+    content.querySelector('div.stream__list') &&
+    content.querySelector('div.streamSidebar')
+  ) {
+    modifyFeedContent(content);
+  }
+
   const contentObserver = new MutationObserver(onContentMutation);
-  contentObserver.observe(contentNode, { childList: true, subtree: false });
+  contentObserver.observe(content, { childList: true, subtree: false });
 }
 
 /**
