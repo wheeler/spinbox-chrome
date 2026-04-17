@@ -40,6 +40,6 @@ export function playPause() {
  * @returns {boolean}
  */
 export function isPlaying() {
-  const playButton = document.querySelector('button.playControl__play');
+  const playButton = document.querySelector('button.playControls__play');
   return playButton && playButton.classList.contains('playing');
 }
