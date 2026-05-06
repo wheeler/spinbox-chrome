@@ -36,7 +36,7 @@
 }
 
 /* spinbox specific styles */
-.spinbox-hidden {
+.stream__list:not(.spinbox-override-hidden) .spinbox-hidden {
   display: none;
 }
 
@@ -111,4 +111,23 @@
   width: 15px;
   height: 15px;
   margin: 0 2px;
+}
+
+.spinbox-eye-toggle {
+  color: var(--font-special-color);
+  .spinbox-eye-icon {
+    display: none;
+  }
+  .spinbox-slash-eye-icon {
+    display: inline-block;
+  }
+  &.spinbox-eye-toggle-visible {
+    color: var(--font-secondary-color);
+    .spinbox-eye-icon {
+      display: inline-block;
+    }
+    .spinbox-slash-eye-icon {
+      display: none;
+    }
+  }
 }
