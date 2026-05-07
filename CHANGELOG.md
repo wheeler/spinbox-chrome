@@ -6,12 +6,13 @@
 
 - Pull Button: quickly add a track to a designated "pull" playlist #6
   - Pull playlist settings in the extension popup
+- Global Active toggle in the sidebar (quickly see all hidden tracks in the feed) #14
 - Small logo and title in sidebar #7
 
 ### Changed
 
 - Reduced the number of "recently hidden" tracks shown in sidebar from 5 to 3 #7
-- Hidden tracks that are being currently played are now temporarily displayed but faded out #8
+- Hidden tracks that are being currently played are now temporarily displayed but faded #8
 
 ### Fixed
 
