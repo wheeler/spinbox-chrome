@@ -20,27 +20,30 @@ export function createSidebarElement() {
   spinboxIcon.style.display = 'inline-block';
   spinboxIcon.style.marginRight = '6px';
   spinboxIcon.style.verticalAlign = 'bottom';
-  const eye = createVisibilityEyeToggle(false);
-  eye.style.display = 'inline-block';
-  eye.style.verticalAlign = 'bottom';
-  eye.style.marginLeft = 'auto';
-  eye.onclick = (event) => {
-    const toggle = event.target.closest('.spinbox-eye-toggle');
-    if (toggle.classList.contains('spinbox-eye-toggle-hidden')) {
-      toggle.classList.remove('spinbox-eye-toggle-hidden');
-      toggle.classList.add('spinbox-eye-toggle-visible');
+  const globalToggle = createGlobalToggle();
+  globalToggle.style.display = 'inline-block';
+  globalToggle.style.verticalAlign = 'bottom';
+  globalToggle.style.marginLeft = 'auto';
+  globalToggle.onclick = (event) => {
+    const toggle = event.target.closest('.spinbox-global-toggle');
+    const toggleText = toggle.querySelector('.spinbox-global-toggle-text');
+    if (toggle.classList.contains('spinbox-global-toggle-active')) {
+      toggle.classList.remove('spinbox-global-toggle-active');
+      toggle.classList.add('spinbox-global-toggle-disabled');
+      toggleText.textContent = 'Disabled';
       document
         .querySelector('.stream__list')
         ?.classList.add('spinbox-override-hidden');
     } else {
-      toggle.classList.remove('spinbox-eye-toggle-visible');
-      toggle.classList.add('spinbox-eye-toggle-hidden');
+      toggle.classList.remove('spinbox-global-toggle-disabled');
+      toggle.classList.add('spinbox-global-toggle-active');
+      toggleText.textContent = 'Active';
       document
         .querySelector('.stream__list')
         ?.classList.remove('spinbox-override-hidden');
     }
   };
-  spinboxTitle.append(spinboxIcon, 'Spinbox', eye);
+  spinboxTitle.append(spinboxIcon, 'Spinbox', globalToggle);
 
   const content = document.createElement('div');
   content.className = 'sidebarContent';
@@ -196,17 +199,24 @@ function createSvgElement(svgString) {
 function createRepostSvg() {
   return createSvgElement(repostSVG);
 }
-function createVisibilityEyeToggle() {
+
+function createGlobalToggle() {
   const svg = createSvgElement(visibilityEye);
-  svg.style.height = '18px';
-  svg.style.width = '18px';
+  svg.style.height = '16px';
+  svg.style.width = '16px';
+  svg.style.verticalAlign = 'bottom';
   const svg2 = createSvgElement(visibilityEyeSlash);
-  svg2.style.height = '18px';
-  svg2.style.width = '18px';
-  const eyeToggle = document.createElement('span');
-  eyeToggle.className = 'spinbox-eye-toggle spinbox-eye-toggle-on';
-  eyeToggle.append(svg, svg2);
-  return eyeToggle;
+  svg2.style.height = '16px';
+  svg2.style.width = '16px';
+  svg2.style.verticalAlign = 'bottom';
+  const globalToggleText = document.createElement('span');
+  globalToggleText.className = 'spinbox-global-toggle-text';
+  globalToggleText.textContent = 'active';
+  // TODO: fix semantics by changing to `button` - requires styling corrections though
+  const globalToggle = document.createElement('div');
+  globalToggle.className = 'spinbox-global-toggle spinbox-global-toggle-active';
+  globalToggle.append(globalToggleText, svg, svg2);
+  return globalToggle;
 }
 
 export function createCouldNotFindPlaylistMessage(playlistName) {
