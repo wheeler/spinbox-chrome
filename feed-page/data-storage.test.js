@@ -170,11 +170,11 @@ describe('SpinboxStorage', () => {
         trackName: 'Flavor Town',
       });
 
-      expect(storage.recentlyHiddenTracks).toHaveLength(4);
+      expect(storage.recentlyHiddenTracks).toHaveLength(3);
       expect(storage.recentlyHiddenTracks[0].trackHref).toBe('/flavortown');
     });
 
-    it('should limit recentlyHiddenTracks to 5 items when adding new tracks', async () => {
+    it('should limit recentlyHiddenTracks to 3 items when adding new tracks', async () => {
       for (let i = 1; i <= 7; i++) {
         await storage.hideTrack({
           trackHref: `track-${i}`,
@@ -182,9 +182,9 @@ describe('SpinboxStorage', () => {
         });
       }
 
-      expect(storage.recentlyHiddenTracks).toHaveLength(5);
+      expect(storage.recentlyHiddenTracks).toHaveLength(3);
       expect(storage.recentlyHiddenTracks[0].trackHref).toBe('track-7');
-      expect(storage.recentlyHiddenTracks[4].trackHref).toBe('track-3');
+      expect(storage.recentlyHiddenTracks[2].trackHref).toBe('track-5');
     });
   });
 
@@ -267,7 +267,6 @@ describe('SpinboxStorage', () => {
       '/ofthetrees/look-into-my-eyes',
       '/foo/baz',
       '/phrva/ghost-voices',
-      '/memorypalace/ghoul',
     ]);
   });
 });

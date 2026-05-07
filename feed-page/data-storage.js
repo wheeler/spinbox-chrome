@@ -1,6 +1,6 @@
 import { getRecentElementsFromArray } from './data-helpers.js';
 
-export const NUM_RECENT_HIDDEN_TRACKS_DISPLAYED = 5;
+export const NUM_RECENT_HIDDEN_TRACKS_DISPLAYED = 3;
 
 class SpinboxStorage {
   settings = {};

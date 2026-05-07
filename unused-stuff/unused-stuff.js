@@ -8,100 +8,25 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
   }
 });
 
-// TODO: actually implement feature flag
-spinbox.digSettings = {};
-const digSettingsPromise = chrome.storage.local.get('digSettings');
-spinbox.digSettings = (await digSettingsPromise).digSettings || {};
-if (spinbox.digSettings.showDig) {
-  const digButton = document.createElement('button');
-  digButton.className =
-    'spinbox-dig sc-button sc-button-medium sc-button-secondary';
-  digButton.style.marginLeft = '4px';
-  digButton.innerText = 'Dig';
-  digButton.onclick = () => {
-    console.log('dig track --', info);
-    manuallyAddTrackToPlaylist(contextElement.closest('li.soundList__item'));
-
-    /* the add track api call was not working correctly, so disabling for now
-    const fullUrl = `https://soundcloud.com${info.trackHref}`;
-    spinbox.scApi.resolve(fullUrl).then((resolvedInfo) => {
-      console.log('dig track resolved info', resolvedInfo);
-      if (resolvedInfo.kind === 'track') {
-        // add track to playlist.
-        console.warn(
-          "not actually sending add to playlist request because it's broken"
-        );
-
-        // spinbox.scApi.addTrackToPlaylist(
-        //   resolvedInfo.id,
-        //   spinbox.digSettings.playlistId
-        // );
-      } else {
-        console.error('dig resolved info is not a track', resolvedInfo);
-      }
-    });
-    */
-  };
-  buttons.push(digButton);
-}
-
-function manuallyAddTrackToPlaylist(element) {
-  const mutationObserverCallback = (mutations, observer) => {
-    for (const mutation of mutations) {
-      if (
-        mutation.type === 'childList' &&
-        mutation.target.classList.contains('lazyLoadingList__list')
-      ) {
-        mutation.addedNodes.forEach((node) => {
-          if (node.classList && node.classList.contains('soundList__item')) {
-            console.log('foo');
-          }
-        });
-      }
-    }
-  };
-
-  const observer = new MutationObserver((mutations, obs) => {
-    const targetPlaylistImage = document.querySelector(
-      'a.addToPlaylistItem__image[title="Dig 2025H2"]'
+/* the add track api call was not working correctly, so disabling for now
+const fullUrl = `https://soundcloud.com${info.trackHref}`;
+spinbox.scApi.resolve(fullUrl).then((resolvedInfo) => {
+  console.log('dig track resolved info', resolvedInfo);
+  if (resolvedInfo.kind === 'track') {
+    // add track to playlist.
+    console.warn(
+      "not actually sending add to playlist request because it's broken"
     );
-    console.log(mutations);
-    if (targetPlaylistImage) {
-      console.log('stop mutation observer');
-      obs.disconnect();
-      const playlistButton = targetPlaylistImage.parentElement.querySelector(
-        'button.addToPlaylistButton'
-      );
-      if (playlistButton.textContent !== 'Added') {
-        playlistButton.click();
-      } else {
-        console.warn('Track had been already added to playlist');
-      }
-      // document.querySelector('button.modal__closeButton').click();
-    }
-  });
 
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-
-  element.querySelector('.sc-button-more').click();
-  document.querySelector('.moreActions .sc-button-addtoset').click();
-  // const targetPlaylistImage = document.querySelector(
-  //   'a.addToPlaylistItem__image[title="Dig 2025H2"]'
-  // );
-  // // wait... or set up mutation observer to find this element
-  // const playlistButton = targetPlaylistImage.parentElement.querySelector(
-  //   'button.addToPlaylistButton'
-  // );
-  // if (playlistButton.textContent !== 'Added') {
-  //   playlistButton.click();
-  // } else {
-  //   console.warn('Track had been already added to playlist');
-  // }
-  document.querySelector('button.modal__closeButton').click();
-}
+    // spinbox.scApi.addTrackToPlaylist(
+    //   resolvedInfo.id,
+    //   spinbox.digSettings.playlistId
+    // );
+  } else {
+    console.error('dig resolved info is not a track', resolvedInfo);
+  }
+});
+*/
 
 // userId/API not currently used
 const userTimer = setInterval(() => {
@@ -169,17 +94,6 @@ document.getElementById('updateAuth').onclick = () => {
     auth: {
       clientId: document.getElementById('clientId').value,
       accessToken: document.getElementById('accessToken').value,
-    },
-  });
-};
-
-const digSettingsPromise = chrome.storage.local.get('digSettings');
-const digSettings = (await digSettingsPromise).digSettings || {};
-document.getElementById('digPlaylist').value = digSettings.playlistId || '';
-document.getElementById('updateDigSettings').onclick = () => {
-  chrome.storage.local.set({
-    digSettings: {
-      playlistId: document.getElementById('digPlaylist').value,
     },
   });
 };

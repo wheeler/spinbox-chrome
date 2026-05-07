@@ -3,15 +3,20 @@ import userEvent from '@testing-library/user-event';
 import {
   addDisableVisualExpandFlagToStreamList,
   addRecentlyHiddenTrack,
+  clickAddToPlaylist,
   getSoundListElementInfo,
+  queryPlaylistItem,
   renderRecentlyHiddenTracksList,
   soundListElementIsCurrentlyPlaying,
   unhideTrackElementWithHref,
   updateHiddenTrackCount,
 } from './feed-dom-helpers.js';
 import {
+  alreadyAddedPlaylistItemElement,
   currentlyPlayingTrackElementFromFeedPage,
+  differentPlaylistItemElement,
   playlistElementFromFeedPage,
+  playlistItemElement,
   repostedTrackElementFromArtistPage,
   repostedTrackElementFromFeedPage,
   trackElementFromArtistPage,
@@ -193,14 +198,13 @@ describe('addRecentlyHiddenTrack', () => {
     });
   });
 
-  describe('when there were already hidden tracks', () => {
+  describe('when there were already two hidden tracks', () => {
     beforeEach(() => {
       document.body.innerHTML = `
       <div>
         <div id="recentlyHiddenTrackList">
           <li>Fake Track 1</li>
           <li>Fake Track 2</li>
-          <li>Fake Track 3</li>
         </div>
       </div>
     `;
@@ -208,21 +212,20 @@ describe('addRecentlyHiddenTrack', () => {
 
     it('adds the hidden track at the top', () => {
       let listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(3);
+      expect(listItems).toHaveLength(2);
 
       addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
 
       listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(4);
+      expect(listItems).toHaveLength(3);
       expect(listItems[0]).toHaveTextContent('The Artist');
       expect(listItems[0]).toHaveTextContent('The Track');
       expect(listItems[1]).toHaveTextContent('Fake Track 1');
       expect(listItems[2]).toHaveTextContent('Fake Track 2');
-      expect(listItems[3]).toHaveTextContent('Fake Track 3');
     });
   });
 
-  describe('when there were already five hidden tracks', () => {
+  describe('when there were already three hidden tracks', () => {
     beforeEach(() => {
       document.body.innerHTML = `
       <div>
@@ -230,8 +233,6 @@ describe('addRecentlyHiddenTrack', () => {
           <li>Fake Track 1</li>
           <li>Fake Track 2</li>
           <li>Fake Track 3</li>
-          <li>Fake Track 4</li>
-          <li>Fake Track 5</li>
         </div>
       </div>
     `;
@@ -239,18 +240,16 @@ describe('addRecentlyHiddenTrack', () => {
 
     it('adds the hidden track at the top and drops the last one', () => {
       let listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(5);
+      expect(listItems).toHaveLength(3);
 
       addRecentlyHiddenTrack(newlyHiddenTrack, mockUndoHideTrack);
 
       listItems = screen.getAllByRole('listitem');
-      expect(listItems).toHaveLength(5);
+      expect(listItems).toHaveLength(3);
       expect(listItems[0]).toHaveTextContent('The Artist');
       expect(listItems[0]).toHaveTextContent('The Track');
       expect(listItems[1]).toHaveTextContent('Fake Track 1');
       expect(listItems[2]).toHaveTextContent('Fake Track 2');
-      expect(listItems[3]).toHaveTextContent('Fake Track 3');
-      expect(listItems[4]).toHaveTextContent('Fake Track 4');
     });
   });
 });
@@ -424,5 +423,59 @@ describe('updateHiddenTrackCount', () => {
     const e = screen.getByRole('heading');
     expect(e).toBeInTheDocument();
     expect(e).toHaveTextContent('0 hidden tracks');
+  });
+});
+
+describe('queryPlaylistItem', () => {
+  it('matches when the title matches', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches even when the playlist is already added', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + alreadyAddedPlaylistItemElement;
+    const result = queryPlaylistItem('Dig 2026');
+    expect(result).toBeInstanceOf(HTMLElement);
+  });
+
+  it('matches when the title does not match', () => {
+    document.body.innerHTML =
+      differentPlaylistItemElement + playlistItemElement;
+    const result = queryPlaylistItem('Something Fake');
+    expect(result).toBeFalsy();
+  });
+});
+
+describe('clickAddToPlaylist', () => {
+  let onClick;
+
+  const makeElement = (html) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    wrapper.querySelector('button').onclick = onClick;
+    return wrapper.firstElementChild;
+  };
+
+  beforeEach(() => {
+    onClick = jest.fn();
+  });
+
+  it('clicks the submit button within the element', () => {
+    const element = makeElement(playlistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not click the button if the button is marked as selected', () => {
+    const element = makeElement(alreadyAddedPlaylistItemElement);
+
+    clickAddToPlaylist(element);
+
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
