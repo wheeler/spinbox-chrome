@@ -280,9 +280,52 @@ describe('SpinboxStorage', () => {
       expect(storage.recentlyHiddenTracks).toEqual([]);
 
       expect(mockChromeStorage.set).toHaveBeenCalledWith(
-        expect.objectContaining({
-          hiddenTracks: expect.objectContaining({}),
-        })
+        expect.objectContaining({ hiddenTracks: {} })
+      );
+    });
+  });
+
+  describe('mergeHiddenTracks', () => {
+    it('should add hidden tracks and persist', async () => {
+      storage.hiddenTracks = mockHiddenTracksResult;
+
+      const importTracks = {
+        // new tracks
+        '/imported/track1': {
+          trackHref: '/imported/track1',
+          trackName: 'Import something',
+          hiddenAtTs: 1773186004000,
+        },
+        '/imported/track2': {
+          trackHref: '/imported/track2',
+          trackName: 'Import something else',
+          hiddenAtTs: 1773186002500,
+        },
+        // duplicate tracks
+        '/ofthetrees/look-into-my-eyes': {
+          trackHref: '/ofthetrees/look-into-my-eyes',
+          trackName: 'Look Into My Eyes',
+          hiddenAtTs: 1773186001000,
+        },
+        '/phrva/ghost-voices': {
+          trackHref: '/phrva/ghost-voices',
+          trackName: 'Ghost Voices',
+          hiddenAtTs: 1773186003000,
+        },
+      };
+
+      await storage.mergeHiddenTracks(importTracks);
+
+      expect(storage.hiddenTrackCount()).toBe(5);
+      expect(storage.recentlyHiddenTracks).toHaveLength(3);
+      expect(storage.recentlyHiddenTracks.map((t) => t.trackHref)).toEqual([
+        '/imported/track1',
+        '/phrva/ghost-voices',
+        '/imported/track2',
+      ]);
+
+      expect(mockChromeStorage.set).toHaveBeenCalledWith(
+        expect.objectContaining({ hiddenTracks: storage.hiddenTracks })
       );
     });
   });

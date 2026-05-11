@@ -57,6 +57,13 @@ class SpinboxStorage {
     this.recentlyHiddenTracks = [];
   }
 
+  // merges an object of new hidden tracks into the existing ones
+  async mergeHiddenTracks(newHiddenTracks) {
+    this.hiddenTracks = { ...this.hiddenTracks, ...newHiddenTracks };
+    await this.#pushHiddenTracks();
+    this.#initializeRecentlyHiddenTracks();
+  }
+
   // merges new settings into the settings and updates locally
   async updateSettings(newSettings) {
     Object.entries(newSettings).forEach(([key, value]) => {

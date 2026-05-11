@@ -33,11 +33,10 @@ async function resetHiddenTracks() {
 }
 
 async function exportHiddenTracks() {
-  // note fetching again for the most recent data possible
-  const storagePromise = chrome.storage.local.get('hiddenTracks');
-  const hiddenTracks = (await storagePromise).hiddenTracks || {};
+  // note: fetching again for the most recent data possible
+  await spinboxStorage.initialLoad();
 
-  const dataStr = JSON.stringify(hiddenTracks, null, 2);
+  const dataStr = JSON.stringify(spinboxStorage.hiddenTracks, null, 2);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(dataBlob);
 
@@ -60,12 +59,10 @@ async function importHiddenTracks(file) {
     }
     // TODO: actually validate import format...
 
-    // note fetching again for the most recent data possible
-    const storagePromise = chrome.storage.local.get('hiddenTracks');
-    const existingTracks = (await storagePromise).hiddenTracks || {};
+    // note: fetching again for the most recent data possible
+    await spinboxStorage.initialLoad();
 
-    const mergedTracks = { ...existingTracks, ...importedTracks };
-    await chrome.storage.local.set({ hiddenTracks: mergedTracks });
+    await spinboxStorage.mergeHiddenTracks(importedTracks);
 
     setupFormAndFields();
     // TODO: send message to content script to update hidden tracks
