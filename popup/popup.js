@@ -1,16 +1,21 @@
+import SpinboxStorage from '../shared/data-storage.js';
+
 console.log('popup.js loaded');
 
+const spinboxStorage = new SpinboxStorage();
+
+const disableToggle = document.getElementById('disableVisualExpand');
 const resetButton = document.getElementById('hiddenTracksResetButton');
 const exportButton = document.getElementById('exportHiddenTracksButton');
 const importButton = document.getElementById('importHiddenTracksButton');
 const importFileInput = document.getElementById('importHiddenTracksFile');
 
 async function loadData() {
+  await spinboxStorage.initialLoad();
+
   // Load 'Disable visual track expand collapse' setting
-  const settingPromise = chrome.storage.local.get('settings');
-  const settings = (await settingPromise).settings || {};
-  const overrideSetting = settings.overrideDisableVisualExpand || false;
-  const disableToggle = document.getElementById('disableVisualExpand');
+  const overrideSetting =
+    spinboxStorage.settings.overrideDisableVisualExpand || false;
   if (disableToggle) {
     disableToggle.checked = !overrideSetting;
     disableToggle.addEventListener('change', async () => {
@@ -18,22 +23,19 @@ async function loadData() {
       // TODO: notify tabs instead of showing a warning
       document.getElementById('visualExpandPageRefreshWarning').style.display =
         'block';
-      await chrome.storage.local.set({
-        settings: {
-          ...settings,
-          overrideDisableVisualExpand: !val,
-        },
+      await spinboxStorage.updateSettings({
+        overrideDisableVisualExpand: !val,
       });
     });
   }
 
   const updateSettingsButton = document.getElementById('updateSettings');
   const pullPlaylistInput = document.getElementById('pullPlaylist');
-  pullPlaylistInput.value = settings.pullPlaylist || '';
+  pullPlaylistInput.value = spinboxStorage.settings.pullPlaylist || '';
   pullPlaylistInput.oninput = (event) => {
     const newValue = event.target.value.trim();
     updateSettingsButton.disabled =
-      newValue === '' || newValue === settings.pullPlaylist;
+      newValue === '' || newValue === spinboxStorage.settings.pullPlaylist;
   };
 
   updateSettingsButton.onclick = async (event) => {
@@ -41,9 +43,8 @@ async function loadData() {
     // TODO: notify tabs instead of showing a warning
     document.getElementById('settingsPageRefreshWarning').style.display =
       'block';
-    settings.pullPlaylist = pullPlaylistInput.value.trim();
-    await chrome.storage.local.set({
-      settings: settings,
+    spinboxStorage.updateSettings({
+      pullPlaylist: pullPlaylistInput.value.trim(),
     });
   };
 
