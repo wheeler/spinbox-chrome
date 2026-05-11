@@ -269,4 +269,21 @@ describe('SpinboxStorage', () => {
       '/phrva/ghost-voices',
     ]);
   });
+
+  describe('resetHiddenTracks', () => {
+    it('should remove all hidden tracks and persist', async () => {
+      storage.hiddenTracks = mockHiddenTracksResult;
+
+      await storage.resetHiddenTracks();
+
+      expect(storage.hiddenTracks).toEqual({});
+      expect(storage.recentlyHiddenTracks).toEqual([]);
+
+      expect(mockChromeStorage.set).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hiddenTracks: expect.objectContaining({}),
+        })
+      );
+    });
+  });
 });

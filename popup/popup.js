@@ -4,54 +4,22 @@ console.log('popup.js loaded');
 
 const spinboxStorage = new SpinboxStorage();
 
-const disableToggle = document.getElementById('disableVisualExpand');
+const disableVisualsToggle = document.getElementById('disableVisualExpand');
+const pullPlaylistInput = document.getElementById('pullPlaylist');
+const updateSettingsButton = document.getElementById('updateSettings');
 const resetButton = document.getElementById('hiddenTracksResetButton');
 const exportButton = document.getElementById('exportHiddenTracksButton');
 const importButton = document.getElementById('importHiddenTracksButton');
 const importFileInput = document.getElementById('importHiddenTracksFile');
 
-async function loadData() {
-  await spinboxStorage.initialLoad();
-
-  // Load 'Disable visual track expand collapse' setting
+function setupFormAndFields() {
   const overrideSetting =
     spinboxStorage.settings.overrideDisableVisualExpand || false;
-  if (disableToggle) {
-    disableToggle.checked = !overrideSetting;
-    disableToggle.addEventListener('change', async () => {
-      const val = disableToggle.checked;
-      // TODO: notify tabs instead of showing a warning
-      document.getElementById('visualExpandPageRefreshWarning').style.display =
-        'block';
-      await spinboxStorage.updateSettings({
-        overrideDisableVisualExpand: !val,
-      });
-    });
-  }
+  disableVisualsToggle.checked = !overrideSetting;
 
-  const updateSettingsButton = document.getElementById('updateSettings');
-  const pullPlaylistInput = document.getElementById('pullPlaylist');
   pullPlaylistInput.value = spinboxStorage.settings.pullPlaylist || '';
-  pullPlaylistInput.oninput = (event) => {
-    const newValue = event.target.value.trim();
-    updateSettingsButton.disabled =
-      newValue === '' || newValue === spinboxStorage.settings.pullPlaylist;
-  };
 
-  updateSettingsButton.onclick = async (event) => {
-    event.target.disabled = true;
-    // TODO: notify tabs instead of showing a warning
-    document.getElementById('settingsPageRefreshWarning').style.display =
-      'block';
-    spinboxStorage.updateSettings({
-      pullPlaylist: pullPlaylistInput.value.trim(),
-    });
-  };
-
-  const storageLoadingPromise = chrome.storage.local.get('hiddenTracks');
-  const hiddenTracks = (await storageLoadingPromise).hiddenTracks || {};
-
-  const hiddenTrackCount = Object.keys(hiddenTracks).length;
+  const hiddenTrackCount = spinboxStorage.hiddenTrackCount();
   const hiddenTracksCount = document.getElementById('hiddenTracksCount');
   hiddenTracksCount.textContent = hiddenTrackCount.toString();
   resetButton.disabled = hiddenTrackCount === 0;
@@ -59,12 +27,13 @@ async function loadData() {
 }
 
 async function resetHiddenTracks() {
-  await chrome.storage.local.set({ hiddenTracks: {} });
-  loadData();
+  await spinboxStorage.resetHiddenTracks();
+  setupFormAndFields();
   // TODO: send message to content script to reset hidden tracks
 }
 
 async function exportHiddenTracks() {
+  // note fetching again for the most recent data possible
   const storagePromise = chrome.storage.local.get('hiddenTracks');
   const hiddenTracks = (await storagePromise).hiddenTracks || {};
 
@@ -91,18 +60,44 @@ async function importHiddenTracks(file) {
     }
     // TODO: actually validate import format...
 
+    // note fetching again for the most recent data possible
     const storagePromise = chrome.storage.local.get('hiddenTracks');
     const existingTracks = (await storagePromise).hiddenTracks || {};
 
     const mergedTracks = { ...existingTracks, ...importedTracks };
     await chrome.storage.local.set({ hiddenTracks: mergedTracks });
 
-    loadData();
+    setupFormAndFields();
     // TODO: send message to content script to update hidden tracks
   } catch (error) {
     alert(`Error importing file: ${error.message}`);
   }
 }
+
+disableVisualsToggle.addEventListener('change', async (e) => {
+  const val = e.target.checked;
+  // TODO: notify tabs instead of showing a warning
+  document.getElementById('visualExpandPageRefreshWarning').style.display =
+    'block';
+  await spinboxStorage.updateSettings({
+    overrideDisableVisualExpand: !val,
+  });
+});
+
+pullPlaylistInput.oninput = (event) => {
+  const newValue = event.target.value.trim();
+  updateSettingsButton.disabled =
+    newValue === '' || newValue === spinboxStorage.settings.pullPlaylist;
+};
+
+updateSettingsButton.onclick = async (event) => {
+  event.target.disabled = true;
+  // TODO: notify tabs instead of showing a warning
+  document.getElementById('settingsPageRefreshWarning').style.display = 'block';
+  await spinboxStorage.updateSettings({
+    pullPlaylist: pullPlaylistInput.value.trim(),
+  });
+};
 
 resetButton.onclick = resetHiddenTracks;
 exportButton.onclick = exportHiddenTracks;
@@ -134,4 +129,9 @@ document.getElementById('visualExpandHelp').addEventListener('click', (e) => {
   }
 });
 
-loadData();
+async function init() {
+  await spinboxStorage.initialLoad();
+  setupFormAndFields();
+}
+
+init();

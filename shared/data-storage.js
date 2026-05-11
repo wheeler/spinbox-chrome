@@ -50,6 +50,13 @@ class SpinboxStorage {
     this.#initializeRecentlyHiddenTracks();
   }
 
+  // resets all hidden tracks to be visible
+  async resetHiddenTracks() {
+    this.hiddenTracks = {};
+    await this.#pushHiddenTracks();
+    this.recentlyHiddenTracks = [];
+  }
+
   // merges new settings into the settings and updates locally
   async updateSettings(newSettings) {
     Object.entries(newSettings).forEach(([key, value]) => {
