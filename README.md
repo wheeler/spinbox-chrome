@@ -53,7 +53,6 @@ Open source (GPLv3). Source code is hosted on GitHub at https://github.com/wheel
 
 ## Planned Features
 
-- Global Show / Hide toggle
 - Hotkey operation for hide and pull
 - Some visual representation for blocks of hidden tracks
 - Optional feature to auto-hide tracks above a certain length
