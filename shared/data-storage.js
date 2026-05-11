@@ -1,4 +1,4 @@
-import { getRecentElementsFromArray } from './data-helpers.js';
+import { getRecentElementsFromArray } from '../feed-page/data-helpers.js';
 
 export const NUM_RECENT_HIDDEN_TRACKS_DISPLAYED = 3;
 
@@ -48,6 +48,32 @@ class SpinboxStorage {
 
     // needed to find the now nth recently hidden track
     this.#initializeRecentlyHiddenTracks();
+  }
+
+  // resets all hidden tracks to be visible
+  async resetHiddenTracks() {
+    this.hiddenTracks = {};
+    await this.#pushHiddenTracks();
+    this.recentlyHiddenTracks = [];
+  }
+
+  // merges an object of new hidden tracks into the existing ones
+  async mergeHiddenTracks(newHiddenTracks) {
+    this.hiddenTracks = { ...this.hiddenTracks, ...newHiddenTracks };
+    await this.#pushHiddenTracks();
+    this.#initializeRecentlyHiddenTracks();
+  }
+
+  // merges new settings into the settings and updates locally
+  async updateSettings(newSettings) {
+    Object.entries(newSettings).forEach(([key, value]) => {
+      this.settings[key] = value;
+    });
+    await this.#pushSettings();
+  }
+
+  async #pushSettings() {
+    await chrome.storage.local.set({ settings: this.settings });
   }
 
   async #pushHiddenTracks() {
