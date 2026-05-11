@@ -19,7 +19,7 @@ import {
   updateHiddenTrackCount,
   waitForPlaylistItem,
 } from './feed-dom-helpers';
-import SpinboxStorage from './data-storage';
+import SpinboxStorage from '../shared/data-storage.js';
 
 console.log('Spinbox - loading');
 

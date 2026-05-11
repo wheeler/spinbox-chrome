@@ -3,7 +3,7 @@ import {
   createNoHiddenTracksMessage,
   createRecentlyHiddenTrackElement,
 } from './new-elements.js';
-import { NUM_RECENT_HIDDEN_TRACKS_DISPLAYED } from './data-storage.js';
+import { NUM_RECENT_HIDDEN_TRACKS_DISPLAYED } from '../shared/data-storage.js';
 
 /**
  * add the flag to a stream list within the contentElement

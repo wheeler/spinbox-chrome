@@ -21,13 +21,25 @@ npx esbuild feed-page/content.js \
 
 echo "✓ Bundled: feed-page/content.js"
 
+# Bundle the content script modules into a single classic script
+npx esbuild popup/popup.js \
+  --bundle \
+  --outfile=dist/popup/popup.js \
+  --format=iife \
+  --target=chrome110 \
+#  --minify
+
+echo "✓ Bundled: popup/popup.js"
+
 # Copy files that don't need bundling
 files=(
   "README.md"
   "CHANGELOG.md"
   "LICENSE"
   "manifest.json"
-  "popup"
+  "popup/popup.html"
+  "popup/popup.css"
+  "popup/expand-contract-example.gif"
   "feed-page/feed-page.css"
   "images"
 )
