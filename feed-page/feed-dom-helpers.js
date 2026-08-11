@@ -55,6 +55,10 @@ export function getSoundListElementInfo(element) {
   return info;
 }
 
+export function findPlayingElement() {
+  return document.querySelector('.sound.playing')?.closest('.soundList__item');
+}
+
 export function soundListElementIsCurrentlyPlaying(element) {
   return element
     .querySelector('div.soundTitle__playButton a.playButton')
